@@ -33,16 +33,16 @@ public class MainWindow : Window, IDisposable
 
     public override void Draw()
     {
-        ImGui.Text($"The random config bool is {Plugin.Configuration.SomePropertyToBeSavedAndWithADefault}");
+        ImGui.Text(string.Format(strings.ConfigBool, Plugin.Configuration.SomePropertyToBeSavedAndWithADefault));
 
-        if (ImGui.Button("Show Settings"))
+        if (ImGui.Button(strings.ShowSettings))
         {
             Plugin.ToggleConfigUI();
         }
 
         ImGui.Spacing();
 
-        ImGui.Text("Have a goat:");
+        ImGui.Text(strings.Goat);
         var goatImage = Plugin.TextureProvider.GetFromFile(GoatImagePath).GetWrapOrDefault();
         if (goatImage != null)
         {
@@ -52,7 +52,7 @@ public class MainWindow : Window, IDisposable
         }
         else
         {
-            ImGui.Text("Image not found.");
+            ImGui.Text(strings.ImageNotFound);
         }
     }
 }

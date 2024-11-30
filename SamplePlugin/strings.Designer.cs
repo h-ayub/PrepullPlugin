@@ -61,11 +61,56 @@ namespace SamplePlugin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The random config bool is {0}.
+        /// </summary>
+        internal static string ConfigBool {
+            get {
+                return ResourceManager.GetString("ConfigBool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Have a goat:.
+        /// </summary>
+        internal static string Goat {
+            get {
+                return ResourceManager.GetString("Goat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A useful message to display in /xlhelp.
+        /// </summary>
+        internal static string HelpMessage {
+            get {
+                return ResourceManager.GetString("HelpMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image not found.
+        /// </summary>
+        internal static string ImageNotFound {
+            get {
+                return ResourceManager.GetString("ImageNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to I am a resource string##With a hidden ID.
         /// </summary>
         internal static string MainWindowTitle {
             get {
                 return ResourceManager.GetString("MainWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show settings.
+        /// </summary>
+        internal static string ShowSettings {
+            get {
+                return ResourceManager.GetString("ShowSettings", resourceCulture);
             }
         }
     }
