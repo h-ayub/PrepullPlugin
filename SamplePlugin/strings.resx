@@ -135,4 +135,7 @@
   <data name="ShowSettings" xml:space="preserve">
     <value>Show settings</value>
   </data>
+  <data name="ToggleMainTank" xml:space="preserve">
+    <value>Main tank</value>
+  </data>
 </root>

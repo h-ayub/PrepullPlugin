@@ -113,5 +113,14 @@ namespace SamplePlugin {
                 return ResourceManager.GetString("ShowSettings", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main tank.
+        /// </summary>
+        internal static string ToggleMainTank {
+            get {
+                return ResourceManager.GetString("ToggleMainTank", resourceCulture);
+            }
+        }
     }
 }

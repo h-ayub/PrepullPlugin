@@ -4,6 +4,7 @@ using Dalamud.Interface.Internal;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using ImGuiNET;
 
 namespace SamplePlugin.Windows;
@@ -12,6 +13,7 @@ public class MainWindow : Window, IDisposable
 {
     private string GoatImagePath;
     private Plugin Plugin;
+    private unsafe PlayerState* playerStatePtr = PlayerState.Instance();
 
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
@@ -31,28 +33,24 @@ public class MainWindow : Window, IDisposable
 
     public void Dispose() { }
 
-    public override void Draw()
+    public unsafe override void Draw()
     {
-        ImGui.Text(string.Format(strings.ConfigBool, Plugin.Configuration.SomePropertyToBeSavedAndWithADefault));
-
-        if (ImGui.Button(strings.ShowSettings))
+        if (playerStatePtr->CurrentClassJobRow == 2529515684192)
         {
-            Plugin.ToggleConfigUI();
+            var isMainTank = Plugin.Configuration.IsMainTank;
+            if (ImGui.Checkbox(strings.ToggleMainTank, ref isMainTank))
+            {
+                Plugin.Configuration.IsMainTank = isMainTank;
+                Plugin.Configuration.Save();
+            }
         }
 
         ImGui.Spacing();
+        ImGui.Text(ReturnPlayerName());
+    }
 
-        ImGui.Text(strings.Goat);
-        var goatImage = Plugin.TextureProvider.GetFromFile(GoatImagePath).GetWrapOrDefault();
-        if (goatImage != null)
-        {
-            ImGuiHelpers.ScaledIndent(55f);
-            ImGui.Image(goatImage.ImGuiHandle, new Vector2(goatImage.Width, goatImage.Height));
-            ImGuiHelpers.ScaledIndent(-55f);
-        }
-        else
-        {
-            ImGui.Text(strings.ImageNotFound);
-        }
+    private unsafe string ReturnPlayerName()
+    {
+        return playerStatePtr->CurrentClassJobRow.ToString();
     }
 }
