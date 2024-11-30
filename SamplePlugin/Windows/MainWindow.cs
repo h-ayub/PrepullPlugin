@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Interface.Internal;
 using Dalamud.Interface.Utility;
@@ -11,7 +12,6 @@ namespace SamplePlugin.Windows;
 
 public class MainWindow : Window, IDisposable
 {
-    private string GoatImagePath;
     private Plugin Plugin;
     private unsafe PlayerState* playerStatePtr = PlayerState.Instance();
 
@@ -27,7 +27,6 @@ public class MainWindow : Window, IDisposable
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
-        GoatImagePath = goatImagePath;
         Plugin = plugin;
     }
 
@@ -35,7 +34,9 @@ public class MainWindow : Window, IDisposable
 
     public unsafe override void Draw()
     {
-        if (playerStatePtr->CurrentClassJobRow == 2529515684192)
+        var jobId = playerStatePtr->CurrentClassJobId;
+        // tanks
+        if (jobId == 19 || jobId == 21 || jobId == 32 || jobId == 37)
         {
             var isMainTank = Plugin.Configuration.IsMainTank;
             if (ImGui.Checkbox(strings.ToggleMainTank, ref isMainTank))
@@ -51,6 +52,6 @@ public class MainWindow : Window, IDisposable
 
     private unsafe string ReturnPlayerName()
     {
-        return playerStatePtr->CurrentClassJobRow.ToString();
+        return playerStatePtr->CurrentClassJobId.ToString();
     }
 }
