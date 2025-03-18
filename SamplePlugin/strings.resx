@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -130,10 +130,16 @@
     <value>Image not found</value>
   </data>
   <data name="MainWindowTitle" xml:space="preserve">
-    <value>I am a resource string##With a hidden ID</value>
+    <value>Prepull##With a hidden ID</value>
+  </data>
+  <data name="NotInInstance" xml:space="preserve">
+    <value>You must be in an instance!</value>
   </data>
   <data name="ShowSettings" xml:space="preserve">
     <value>Show settings</value>
+  </data>
+  <data name="SummonPet" xml:space="preserve">
+    <value>Summon pet</value>
   </data>
   <data name="ToggleMainTank" xml:space="preserve">
     <value>Main tank</value>

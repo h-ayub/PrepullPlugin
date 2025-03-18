@@ -97,11 +97,20 @@ namespace SamplePlugin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I am a resource string##With a hidden ID.
+        ///   Looks up a localized string similar to Prepull##With a hidden ID.
         /// </summary>
         internal static string MainWindowTitle {
             get {
                 return ResourceManager.GetString("MainWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must be in an instance!.
+        /// </summary>
+        internal static string NotInInstance {
+            get {
+                return ResourceManager.GetString("NotInInstance", resourceCulture);
             }
         }
         
@@ -111,6 +120,15 @@ namespace SamplePlugin {
         internal static string ShowSettings {
             get {
                 return ResourceManager.GetString("ShowSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Summon pet.
+        /// </summary>
+        internal static string SummonPet {
+            get {
+                return ResourceManager.GetString("SummonPet", resourceCulture);
             }
         }
         
