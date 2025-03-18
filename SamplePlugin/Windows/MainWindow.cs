@@ -49,7 +49,7 @@ public class MainWindow : Window, IDisposable
             Plugin.Configuration.TerritoryConditions[territoryId] = new Configuration.TerritoryConfig();
         }
 
-        var jobId = playerStatePtr->CurrentClassJobId;
+        var jobId = playerStatePtr->CurrentClassJobId;  // TODO: figure out a way to save settings per job
         ImGui.Text(ReturnTerritoryName(territoryId));
         ImGui.Spacing();
 
