@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SamplePlugin {
+namespace Prepull {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SamplePlugin {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SamplePlugin.strings", typeof(strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Prepull.strings", typeof(strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -70,6 +70,15 @@ namespace SamplePlugin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Config.
+        /// </summary>
+        internal static string ConfigWindowTitle {
+            get {
+                return ResourceManager.GetString("ConfigWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Have a goat:.
         /// </summary>
         internal static string Goat {
@@ -79,7 +88,7 @@ namespace SamplePlugin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A useful message to display in /xlhelp.
+        ///   Looks up a localized string similar to Opens up window to set up prepull parameters.
         /// </summary>
         internal static string HelpMessage {
             get {
@@ -97,11 +106,20 @@ namespace SamplePlugin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I am a resource string##With a hidden ID.
+        ///   Looks up a localized string similar to Prepull##With a hidden ID.
         /// </summary>
         internal static string MainWindowTitle {
             get {
                 return ResourceManager.GetString("MainWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must be in an instance!.
+        /// </summary>
+        internal static string NotInInstance {
+            get {
+                return ResourceManager.GetString("NotInInstance", resourceCulture);
             }
         }
         
@@ -111,6 +129,24 @@ namespace SamplePlugin {
         internal static string ShowSettings {
             get {
                 return ResourceManager.GetString("ShowSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Summon pet.
+        /// </summary>
+        internal static string SummonPet {
+            get {
+                return ResourceManager.GetString("SummonPet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main tank.
+        /// </summary>
+        internal static string ToggleMainTank {
+            get {
+                return ResourceManager.GetString("ToggleMainTank", resourceCulture);
             }
         }
     }
