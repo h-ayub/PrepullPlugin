@@ -15,6 +15,8 @@
         "DalamudApiLevel": 11,
         "LoadPriority": 0,
         "DownloadCount": 0,
+        "DownloadLinkInstall": "https://github.com/h-ayub/Prepull-Plugin/releases/download/v.10/Prepull.zip",
+        "DownloadLinkUpdate": "https://github.com/h-ayub/Prepull-Plugin/releases/download/v.10/Prepull.zip",
         "_isDip17Plugin": false,
         "_Dip17Channel": null
     }
