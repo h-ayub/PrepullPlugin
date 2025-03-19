@@ -1,7 +1,7 @@
 {
     "Author": "Oppressed Gamer-",
     "Name": "Prepull",
-    "InternalName": "MakePlacePlugin",
+    "InternalName": "Prepull",
     "AssemblyVersion": "1.0",
     "Punchline": "A plugin for automating some prepull stuff like tank stance and summoning fairy",
     "Description": "/ppp to open up configuration window for setting up prepull parameters",
