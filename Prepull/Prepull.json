@@ -7,7 +7,7 @@
         "Punchline": "A plugin for automating some prepull stuff like tank stance and summoning fairy",
         "Description": "/ppp to open up configuration window for setting up prepull parameters",
         "ApplicableVersion": "any",
-        "RepoUrl": "https://github.com/h-ayub/Prepull-Plugin",
+        "RepoUrl": "https://github.com/h-ayub/PrepullPlugin",
         "Tags": [
             "prepull",
             "plugin"
@@ -15,8 +15,8 @@
         "DalamudApiLevel": 11,
         "LoadPriority": 0,
         "DownloadCount": 0,
-        "DownloadLinkInstall": "https://github.com/h-ayub/Prepull-Plugin/releases/download/v.10/Prepull.zip",
-        "DownloadLinkUpdate": "https://github.com/h-ayub/Prepull-Plugin/releases/download/v.10/Prepull.zip",
+        "DownloadLinkInstall": "https://github.com/h-ayub/PrepullPlugin/releases/download/v.10/Prepull.zip",
+        "DownloadLinkUpdate": "https://github.com/h-ayub/PrepullPlugin/releases/download/v.10/Prepull.zip",
         "_isDip17Plugin": false,
         "_Dip17Channel": null
     }
