@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SamplePlugin {
+namespace Prepull {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SamplePlugin {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SamplePlugin.strings", typeof(strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Prepull.strings", typeof(strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -70,6 +70,15 @@ namespace SamplePlugin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Config.
+        /// </summary>
+        internal static string ConfigWindowTitle {
+            get {
+                return ResourceManager.GetString("ConfigWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Have a goat:.
         /// </summary>
         internal static string Goat {
@@ -79,7 +88,7 @@ namespace SamplePlugin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A useful message to display in /xlhelp.
+        ///   Looks up a localized string similar to Opens up window to set up prepull parameters.
         /// </summary>
         internal static string HelpMessage {
             get {

@@ -2,11 +2,10 @@
   "Author": "Oppressed Gamer-",
   "Name": "Prepull",
   "Punchline": "A plugin for automating some prepull stuff like tank stance and summoning fairy",
-  "Description": "A description that shows up in /xlplugins. List any major slash-command(s).",
+  "Description": "/ppp to open up configuration window for setting up prepull parameters",
   "ApplicableVersion": "any",
   "Tags": [
-    "sample",
-    "plugin",
-    "goats"
+    "prepull",
+    "plugin"
   ]
 }

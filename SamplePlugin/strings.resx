@@ -120,11 +120,14 @@
   <data name="ConfigBool" xml:space="preserve">
     <value>The random config bool is {0}</value>
   </data>
+  <data name="ConfigWindowTitle" xml:space="preserve">
+    <value>Config</value>
+  </data>
   <data name="Goat" xml:space="preserve">
     <value>Have a goat:</value>
   </data>
   <data name="HelpMessage" xml:space="preserve">
-    <value>A useful message to display in /xlhelp</value>
+    <value>Opens up window to set up prepull parameters</value>
   </data>
   <data name="ImageNotFound" xml:space="preserve">
     <value>Image not found</value>
