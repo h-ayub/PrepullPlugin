@@ -1,11 +1,21 @@
-{
-  "Author": "Oppressed Gamer-",
-  "Name": "Prepull",
-  "Punchline": "A plugin for automating some prepull stuff like tank stance and summoning fairy",
-  "Description": "/ppp to open up configuration window for setting up prepull parameters",
-  "ApplicableVersion": "any",
-  "Tags": [
-    "prepull",
-    "plugin"
-  ]
-}
+[
+    {
+        "Author": "Oppressed Gamer-",
+        "Name": "Prepull",
+        "InternalName": "MakePlacePlugin",
+        "AssemblyVersion": "3.7.3",
+        "Punchline": "A plugin for automating some prepull stuff like tank stance and summoning fairy",
+        "Description": "/ppp to open up configuration window for setting up prepull parameters",
+        "ApplicableVersion": "any",
+        "RepoUrl": "https://github.com/h-ayub/Prepull-Plugin",
+        "Tags": [
+            "prepull",
+            "plugin"
+        ],
+        "DalamudApiLevel": 11,
+        "LoadPriority": 0,
+        "DownloadCount": 0,
+        "_isDip17Plugin": false,
+        "_Dip17Channel": null
+    }
+]
