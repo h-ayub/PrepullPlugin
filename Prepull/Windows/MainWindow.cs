@@ -39,7 +39,7 @@ public class MainWindow : Window, IDisposable
         
         if (!Plugin.Configuration.TerritoryConditions.ContainsKey(territoryId)) // check if we do not have data on this territory
         {
-            Plugin.Configuration.TerritoryConditions[territoryId] = new Configuration.TerritoryConfig();
+            Plugin.Configuration.TerritoryConditions[territoryId] = new Configuration.TerritoryConfig(Plugin.Configuration.DefaultMainTank);
         }
 
         var jobId = playerStatePtr->CurrentClassJobId;
