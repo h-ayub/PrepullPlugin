@@ -71,7 +71,7 @@ public sealed class Prepull : IDalamudPlugin
         // This fetches the territory names from excel sheet in dalamud repository
         this.TerritoryNames = DataManager.GetExcelSheet<TerritoryType>().Where(x => x.PlaceName.ValueNullable?.Name.ToString().Length > 0)
             .ToDictionary(x => x.RowId,
-                x => $"{x.PlaceName.ValueNullable?.Name}{(x.ContentFinderCondition.ValueNullable?.Name.ToString().Length > 0 ? $" ({x.ContentFinderCondition.ValueNullable?.Name})" : string.Empty)}");
+                x => $"{x.PlaceName.ValueNullable?.Name} {(x.ContentFinderCondition.ValueNullable?.Name.ToString().Length > 0 ? $" ({x.ContentFinderCondition.ValueNullable?.Name})" : string.Empty)}");
     }
 
     public void Dispose()
@@ -110,9 +110,9 @@ public sealed class Prepull : IDalamudPlugin
         var territoryId = ClientState.TerritoryType;
         var jobId = playerStatePtr->CurrentClassJobId;
 
-        ActivateTankStance(jobId, am, territoryId);
+        ExecuteTankProtocol(jobId, am, territoryId);
 
-        SummonPet(jobId, am, territoryId);
+        ExecutePetProtocol(jobId, am, territoryId);
     }
 
     private bool IsMainTank(byte jobId, ushort territoryId)
@@ -147,7 +147,30 @@ public sealed class Prepull : IDalamudPlugin
         };
     }
 
-    private unsafe void ActivateTankStance(byte jobId, ActionManager* am, ushort territoryId)
+    private unsafe void ActivateTankStance(byte jobId, ActionManager* am)
+    {
+        uint actionId = jobId switch
+        {
+            19 => 28,       // warrior
+            21 => 48,       // paladin
+            32 => 3629,     // dark knight
+            37 => 16142,    // gunbreaker
+            _ => throw new System.NotImplementedException()
+        };
+
+        if (am->GetActionStatus(ActionType.Action, actionId) == 0)
+        {
+            am->UseAction(ActionType.Action, actionId);
+        }
+    }
+
+    private bool IsHighLevelContent(ushort territoryId)
+    {
+        string name = TerritoryNames[territoryId];
+        return name.Contains("Extreme") || name.Contains("Savage") || name.Contains("Ultimate");
+    }
+
+    private unsafe void ExecuteTankProtocol(byte jobId, ActionManager* am, ushort territoryId)
     {
         ushort stanceId = jobId switch
         {
@@ -162,28 +185,22 @@ public sealed class Prepull : IDalamudPlugin
             return;
 
         var stanceActive = ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == stanceId);
+        var mainTankStanceIsOff = !stanceActive && IsMainTank(jobId, territoryId);
+        var offTankStanceIsOn = stanceActive && !IsMainTank(jobId, territoryId);
 
-        if ((!stanceActive && IsMainTank(jobId, territoryId)) || (stanceActive && !IsMainTank(jobId, territoryId)))
+        if (IsHighLevelContent(territoryId) && (mainTankStanceIsOff || offTankStanceIsOn))
         {
-            uint actionId = jobId switch
-            {
-                19 => 28,       // warrior
-                21 => 48,       // paladin
-                32 => 3629,     // dark knight
-                37 => 16142,    // gunbreaker
-                _ => throw new System.NotImplementedException()
-            };
-
-            if (am->GetActionStatus(ActionType.Action, actionId) == 0)
-            {
-                am->UseAction(ActionType.Action, actionId);
-            }
+            ActivateTankStance(jobId, am);
+            return;
+        } else if (!stanceActive)
+        {
+            ActivateTankStance(jobId, am);
         }
     }
 
-    private unsafe void SummonPet(byte jobId, ActionManager* am, ushort territoryId)
+    private unsafe void ExecutePetProtocol(byte jobId, ActionManager* am, ushort territoryId)
     {
-        var summonPet = BuddyList.PetBuddy == null && IsSummonPet(jobId, territoryId);
+        var summonPet = BuddyList.PetBuddy == null &&  (!IsHighLevelContent(territoryId) || IsSummonPet(jobId, territoryId));
 
         if (jobId == 27 && summonPet) // scholar
         {
