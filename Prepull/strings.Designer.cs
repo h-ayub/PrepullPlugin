@@ -79,6 +79,15 @@ namespace Prepull {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Default to main tank.
+        /// </summary>
+        internal static string DefaultMainTank {
+            get {
+                return ResourceManager.GetString("DefaultMainTank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Have a goat:.
         /// </summary>
         internal static string Goat {
@@ -88,11 +97,20 @@ namespace Prepull {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Opens up window to set up default behaviors.
+        /// </summary>
+        internal static string HelpMessageConfigWindow {
+            get {
+                return ResourceManager.GetString("HelpMessageConfigWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Opens up window to set up prepull parameters.
         /// </summary>
-        internal static string HelpMessage {
+        internal static string HelpMessageMainWindow {
             get {
-                return ResourceManager.GetString("HelpMessage", resourceCulture);
+                return ResourceManager.GetString("HelpMessageMainWindow", resourceCulture);
             }
         }
         

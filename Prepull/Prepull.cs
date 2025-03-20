@@ -24,7 +24,8 @@ public sealed class Prepull : IDalamudPlugin
     [PluginService] internal static IDutyState DutyState { get; private set; } = null!;
     [PluginService] internal static IBuddyList BuddyList { get; private set; } = null!;
 
-    private const string CommandName = "/ppp";
+    private const string OpenMainWindow = "/ppp";
+    private const string OpenConfigWindow = "/ppc";
 
     public Configuration Configuration { get; init; }
 
@@ -32,7 +33,7 @@ public sealed class Prepull : IDalamudPlugin
     private ConfigWindow ConfigWindow { get; init; }
     private MainWindow MainWindow { get; init; }
 
-    internal Dictionary<uint, string> TerritoryNames = new();
+    internal Dictionary<uint, string> TerritoryNames = [];
 
     public Prepull()
     {
@@ -41,12 +42,17 @@ public sealed class Prepull : IDalamudPlugin
         ConfigWindow = new ConfigWindow(this);
         MainWindow = new MainWindow(this);
 
-        //WindowSystem.AddWindow(ConfigWindow);
+        WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
 
-        CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
+        CommandManager.AddHandler(OpenMainWindow, new CommandInfo(OnMainUICommand)
         {
-            HelpMessage = strings.HelpMessage
+            HelpMessage = strings.HelpMessageMainWindow
+        });
+
+        CommandManager.AddHandler(OpenConfigWindow, new CommandInfo(OnConfigUICommand)
+        {
+            HelpMessage = strings.HelpMessageConfigWindow
         });
 
         PluginInterface.UiBuilder.Draw += DrawUI;
@@ -78,13 +84,18 @@ public sealed class Prepull : IDalamudPlugin
         DutyState.DutyStarted -= ActivatePrepull;
         DutyState.DutyRecommenced -= ActivatePrepull;
 
-        CommandManager.RemoveHandler(CommandName);
+        CommandManager.RemoveHandler(OpenMainWindow);
     }
 
-    private void OnCommand(string command, string args)
+    private void OnMainUICommand(string command, string args)
     {
         // in response to the slash command, just toggle the display status of our main ui
         ToggleMainUI();
+    }
+
+    private void OnConfigUICommand(string command, string args)
+    {
+        ToggleConfigUI();
     }
 
     private void DrawUI() => WindowSystem.Draw();
@@ -106,32 +117,34 @@ public sealed class Prepull : IDalamudPlugin
 
     private bool IsMainTank(byte jobId, ushort territoryId)
     {
-        if (!Configuration.TerritoryConditions.ContainsKey(territoryId))
+        if (!Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
         {
-            Configuration.TerritoryConditions[territoryId] = new Configuration.TerritoryConfig();
+            value = new Configuration.TerritoryConfig(Configuration.DefaultMainTank);
+            Configuration.TerritoryConditions[territoryId] = value;
         }
-        switch (jobId)
+        return jobId switch
         {
-            case 19: return Configuration.TerritoryConditions[territoryId].IsWarMainTank;
-            case 21: return Configuration.TerritoryConditions[territoryId].IsPldMainTank;
-            case 32: return Configuration.TerritoryConditions[territoryId].IsDrkMainTank;
-            case 37: return Configuration.TerritoryConditions[territoryId].IsGnbMainTank;
-            default: return false;
-        }
+            19 => value.IsWarMainTank,
+            21 => value.IsPldMainTank,
+            32 => value.IsDrkMainTank,
+            37 => value.IsGnbMainTank,
+            _ => false,
+        };
     }
 
     private bool IsSummonPet(byte jobId, ushort territoryId)
     {
-        if (!Configuration.TerritoryConditions.ContainsKey(territoryId))
+        if (!Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
         {
-            Configuration.TerritoryConditions[territoryId] = new Configuration.TerritoryConfig();
+            value = new Configuration.TerritoryConfig(Configuration.DefaultMainTank);
+            Configuration.TerritoryConditions[territoryId] = value;
         }
-        switch (jobId)
+        return jobId switch
         {
-            case 27: return Configuration.TerritoryConditions[territoryId].IsSchSummonPet;
-            case 28: return Configuration.TerritoryConditions[territoryId].IsSmnSummonPet;
-            default: return false;
-        }
+            27 => value.IsSchSummonPet,
+            28 => value.IsSmnSummonPet,
+            _ => false,
+        };
     }
 
     private unsafe void ActivateTankStance(byte jobId, ActionManager* am, ushort territoryId)
@@ -145,12 +158,12 @@ public sealed class Prepull : IDalamudPlugin
             _ => 0
         };
 
-        if (stanceId == 0)
+        if (stanceId == 0 || ClientState.LocalPlayer == null)
             return;
 
         var stanceActive = ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == stanceId);
 
-        if (!stanceActive && IsMainTank(jobId, territoryId) || stanceActive && !IsMainTank(jobId, territoryId))
+        if ((!stanceActive && IsMainTank(jobId, territoryId)) || (stanceActive && !IsMainTank(jobId, territoryId)))
         {
             uint actionId = jobId switch
             {
