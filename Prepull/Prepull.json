@@ -2,9 +2,9 @@
     "Author": "Oppressed Gamer-",
     "Name": "Prepull",
     "InternalName": "Prepull",
-    "AssemblyVersion": "1.0",
+    "AssemblyVersion": "1.0.1",
     "Punchline": "A plugin for automating some prepull stuff like tank stance and summoning fairy",
-    "Description": "/ppp to open up configuration window for setting up prepull parameters",
+    "Description": "/ppp to open up configuration window for setting up prepull parameters\n/ppc to open up a configuration window for setting up default behaviors",
     "ApplicableVersion": "any",
     "RepoUrl": "https://github.com/h-ayub/PrepullPlugin",
     "Tags": [
