@@ -150,7 +150,10 @@
   <data name="HelpMessageMainWindow" xml:space="preserve">
     <value>Opens up window to set up prepull parameters</value>
   </data>
-    <data name="HelpMessageConfigWindow" xml:space="preserve">
+  <data name="HelpMessageConfigWindow" xml:space="preserve">
     <value>Opens up window to set up default behaviors</value>
+  </data>
+  <data name="RefreshFood" xml:space="preserve">
+    <value>Refresh food!</value>
   </data>
 </root>
