@@ -188,11 +188,9 @@ public sealed class Prepull : IDalamudPlugin
         if (IsNormalContent(territoryId) || IsNormalDungeon(territoryId)) return;
 
         var food = ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == 48);
+        var timeRemaining = ClientState.LocalPlayer.StatusList.FirstOrDefault(x => x.StatusId == 48)?.RemainingTime;
 
-        if (!food) return;
-        var timeRemaining = ClientState.LocalPlayer.StatusList.First(x => x.StatusId == 48)?.RemainingTime;
-
-        if (timeRemaining < 600)
+        if (!food || timeRemaining < 600)
         {
             ChatGui.PrintError(strings.RefreshFood);
             UIGlobals.PlayChatSoundEffect(1);
