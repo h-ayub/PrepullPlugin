@@ -7,6 +7,8 @@ using Lumina.Excel.Sheets;
 
 namespace KamiLib.Extensions;
 
+// Credit to Kami for this extension!
+
 public enum DutyType {
 	Unknown,
 	Savage,
