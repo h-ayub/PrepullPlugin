@@ -151,6 +151,15 @@ namespace Prepull {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Refresh food reminder (mins).
+        /// </summary>
+        internal static string RefreshFoodTimer {
+            get {
+                return ResourceManager.GetString("RefreshFoodTimer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show settings.
         /// </summary>
         internal static string ShowSettings {

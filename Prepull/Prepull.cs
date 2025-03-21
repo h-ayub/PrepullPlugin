@@ -125,7 +125,7 @@ public sealed class Prepull : IDalamudPlugin
     {
         if (!Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
         {
-            value = new Configuration.TerritoryConfig(Configuration.DefaultMainTank);
+            value = new Configuration.TerritoryConfig(Configuration.DefaultMainTank, Configuration.FoodBuffRefreshTime);
             Configuration.TerritoryConditions[territoryId] = value;
         }
         return jobId switch
@@ -142,7 +142,7 @@ public sealed class Prepull : IDalamudPlugin
     {
         if (!Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
         {
-            value = new Configuration.TerritoryConfig(Configuration.DefaultMainTank);
+            value = new Configuration.TerritoryConfig(Configuration.DefaultMainTank, Configuration.FoodBuffRefreshTime);
             Configuration.TerritoryConditions[territoryId] = value;
         }
         return jobId switch
@@ -189,8 +189,9 @@ public sealed class Prepull : IDalamudPlugin
 
         var food = ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == 48);
         var timeRemaining = ClientState.LocalPlayer.StatusList.FirstOrDefault(x => x.StatusId == 48)?.RemainingTime;
+        var refreshTime = Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime;
 
-        if (!food || timeRemaining < 600)
+        if (!food || timeRemaining < refreshTime)
         {
             ChatGui.PrintError(strings.RefreshFood);
             UIGlobals.PlayChatSoundEffect(1);
