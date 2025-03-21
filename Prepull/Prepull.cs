@@ -10,6 +10,7 @@ using Lumina.Excel.Sheets;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using KamiLib.Extensions;
 
 namespace Prepull;
 
@@ -33,7 +34,7 @@ public sealed class Prepull : IDalamudPlugin
     private ConfigWindow ConfigWindow { get; init; }
     private MainWindow MainWindow { get; init; }
 
-    internal Dictionary<uint, string> TerritoryNames = [];
+    internal Dictionary<uint, (string, DutyType)> TerritoryNames = [];
 
     public Prepull()
     {
@@ -71,7 +72,8 @@ public sealed class Prepull : IDalamudPlugin
         // This fetches the territory names from excel sheet in dalamud repository
         this.TerritoryNames = DataManager.GetExcelSheet<TerritoryType>().Where(x => x.PlaceName.ValueNullable?.Name.ToString().Length > 0)
             .ToDictionary(x => x.RowId,
-                x => $"{x.PlaceName.ValueNullable?.Name} {(x.ContentFinderCondition.ValueNullable?.Name.ToString().Length > 0 ? $" ({x.ContentFinderCondition.ValueNullable?.Name})" : string.Empty)}");
+                x => ($"{x.PlaceName.ValueNullable?.Name} {(x.ContentFinderCondition.ValueNullable?.Name.ToString().Length > 0 ? $" ({x.ContentFinderCondition.ValueNullable?.Name})" : string.Empty)}",
+                        DataManager.GetDutyType(x.ContentFinderCondition.Value)));
     }
 
     public void Dispose()
@@ -164,14 +166,22 @@ public sealed class Prepull : IDalamudPlugin
         }
     }
 
-    private bool IsHighLevelContent(ushort territoryId)
+    private bool IsNormalDungeon(ushort territoryId)
     {
-        string name = TerritoryNames[territoryId];
-        return name.Contains("Extreme") || name.Contains("Savage") || name.Contains("Ultimate");
+        var type = TerritoryNames[territoryId].Item2;
+        return type == DutyType.Dungeon;
+    }
+
+    private bool IsNormalContent(ushort territoryId)
+    {
+        var type = TerritoryNames[territoryId].Item2;
+        return type == DutyType.NormalRaid || type == DutyType.Alliance || type == DutyType.Trial || type == DutyType.Unknown;
     }
 
     private unsafe void ExecuteTankProtocol(byte jobId, ActionManager* am, ushort territoryId)
     {
+        if (IsNormalContent(territoryId)) return;
+
         ushort stanceId = jobId switch
         {
             19 => 79,   // warrior
@@ -188,7 +198,7 @@ public sealed class Prepull : IDalamudPlugin
         var mainTankStanceIsOff = !stanceActive && IsMainTank(jobId, territoryId);
         var offTankStanceIsOn = stanceActive && !IsMainTank(jobId, territoryId);
 
-        if (IsHighLevelContent(territoryId) && (mainTankStanceIsOff || offTankStanceIsOn))
+        if (!IsNormalDungeon(territoryId) && (mainTankStanceIsOff || offTankStanceIsOn))
         {
             ActivateTankStance(jobId, am);
             return;
@@ -200,7 +210,7 @@ public sealed class Prepull : IDalamudPlugin
 
     private unsafe void ExecutePetProtocol(byte jobId, ActionManager* am, ushort territoryId)
     {
-        var summonPet = BuddyList.PetBuddy == null &&  (!IsHighLevelContent(territoryId) || IsSummonPet(jobId, territoryId));
+        var summonPet = BuddyList.PetBuddy == null &&  (IsNormalDungeon(territoryId) || IsSummonPet(jobId, territoryId));
 
         if (jobId == 27 && summonPet) // scholar
         {
