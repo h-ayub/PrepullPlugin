@@ -104,8 +104,8 @@ public class MainWindow : Window, IDisposable
         {
             if (foodRefreshTime < 1) 
                 foodRefreshTime = 1;
-            if (foodRefreshTime > 60)
-                foodRefreshTime = 60;
+            if (foodRefreshTime > 20)
+                foodRefreshTime = 20;
 
             Plugin.Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime = foodRefreshTime*60;
             Plugin.Configuration.Save();
