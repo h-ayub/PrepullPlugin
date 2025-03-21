@@ -142,6 +142,15 @@ namespace Prepull {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Refresh food!.
+        /// </summary>
+        internal static string RefreshFood {
+            get {
+                return ResourceManager.GetString("RefreshFood", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show settings.
         /// </summary>
         internal static string ShowSettings {

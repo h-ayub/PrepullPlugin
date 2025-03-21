@@ -1,7 +1,6 @@
 using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
-using System.IO;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using Prepull.Windows;
@@ -11,6 +10,10 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using KamiLib.Extensions;
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using Dalamud.Game.Text.SeStringHandling;
+using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Component.SteamApi.Callbacks;
 
 namespace Prepull;
 
@@ -24,6 +27,7 @@ public sealed class Prepull : IDalamudPlugin
     [PluginService] internal static IDataManager DataManager { get; private set; } = null!;
     [PluginService] internal static IDutyState DutyState { get; private set; } = null!;
     [PluginService] internal static IBuddyList BuddyList { get; private set; } = null!;
+    [PluginService] internal static IChatGui ChatGui { get; private set; } = null!;
 
     private const string OpenMainWindow = "/ppp";
     private const string OpenConfigWindow = "/ppc";
@@ -113,8 +117,8 @@ public sealed class Prepull : IDalamudPlugin
         var jobId = playerStatePtr->CurrentClassJobId;
 
         ExecuteTankProtocol(jobId, am, territoryId);
-
         ExecutePetProtocol(jobId, am, territoryId);
+        CheckRemainingFoodBuff(territoryId);
     }
 
     private bool IsMainTank(byte jobId, ushort territoryId)
@@ -178,6 +182,23 @@ public sealed class Prepull : IDalamudPlugin
         return type == DutyType.NormalRaid || type == DutyType.Alliance || type == DutyType.Trial || type == DutyType.Unknown;
     }
 
+    private unsafe void CheckRemainingFoodBuff(ushort territoryId)
+    {
+        if (ClientState.LocalPlayer == null) return;
+        if (IsNormalContent(territoryId) || IsNormalDungeon(territoryId)) return;
+
+        var food = ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == 48);
+
+        if (!food) return;
+        var timeRemaining = ClientState.LocalPlayer.StatusList.First(x => x.StatusId == 48)?.RemainingTime;
+
+        if (timeRemaining < 600)
+        {
+            ChatGui.PrintError(strings.RefreshFood);
+            UIGlobals.PlayChatSoundEffect(1);
+        }
+    }
+
     private unsafe void ExecuteTankProtocol(byte jobId, ActionManager* am, ushort territoryId)
     {
         if (IsNormalContent(territoryId)) return;
@@ -202,7 +223,7 @@ public sealed class Prepull : IDalamudPlugin
         {
             ActivateTankStance(jobId, am);
             return;
-        } else if (!stanceActive)
+        } else if (IsNormalDungeon(territoryId) && !stanceActive)
         {
             ActivateTankStance(jobId, am);
         }
