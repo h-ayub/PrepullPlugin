@@ -88,6 +88,15 @@ namespace Prepull {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Breakpoint to repair gear (%).
+        /// </summary>
+        internal static string GearRepairBreakpoint {
+            get {
+                return ResourceManager.GetString("GearRepairBreakpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Have a goat:.
         /// </summary>
         internal static string Goat {
