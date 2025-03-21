@@ -9,6 +9,7 @@ public class Configuration : IPluginConfiguration
 {
     public int Version { get; set; } = 0;
     public bool DefaultMainTank { get; set; } = false;
+    public int FoodBuffRefreshTime { get; set; } = 600;
     public Dictionary<ushort, TerritoryConfig> TerritoryConditions = [];
 
     // the below exist just to make saving less cumbersome
@@ -18,7 +19,7 @@ public class Configuration : IPluginConfiguration
     }
 
     [Serializable]
-    public class TerritoryConfig(bool defaultMainTank)
+    public class TerritoryConfig(bool defaultMainTank, int foodBuffRefreshTime)
     {
         public bool IsWarMainTank { get; set; } = defaultMainTank;
         public bool IsPldMainTank { get; set; } = defaultMainTank;
@@ -26,5 +27,6 @@ public class Configuration : IPluginConfiguration
         public bool IsGnbMainTank { get; set; } = defaultMainTank;
         public bool IsSchSummonPet { get; set; } = true;
         public bool IsSmnSummonPet { get; set; } = true;
+        public int FoodBuffRefreshTime { get; set; } = foodBuffRefreshTime;
     }
 }

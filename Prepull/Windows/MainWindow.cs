@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using ImGuiNET;
@@ -39,7 +40,7 @@ public class MainWindow : Window, IDisposable
         
         if (!Plugin.Configuration.TerritoryConditions.ContainsKey(territoryId)) // check if we do not have data on this territory
         {
-            Plugin.Configuration.TerritoryConditions[territoryId] = new Configuration.TerritoryConfig(Plugin.Configuration.DefaultMainTank);
+            Plugin.Configuration.TerritoryConditions[territoryId] = new Configuration.TerritoryConfig(Plugin.Configuration.DefaultMainTank, Plugin.Configuration.FoodBuffRefreshTime);
         }
 
         var jobId = playerStatePtr->CurrentClassJobId;
@@ -95,6 +96,19 @@ public class MainWindow : Window, IDisposable
                 }
                 Plugin.Configuration.Save();
             }
+        }
+
+        var foodRefreshTime = Plugin.Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime/60;
+        ImGui.SetNextItemWidth(100f * ImGuiHelpers.GlobalScale);
+        if (ImGui.InputInt(strings.RefreshFoodTimer, ref foodRefreshTime, 1))
+        {
+            if (foodRefreshTime < 1) 
+                foodRefreshTime = 1;
+            if (foodRefreshTime > 20)
+                foodRefreshTime = 20;
+
+            Plugin.Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime = foodRefreshTime*60;
+            Plugin.Configuration.Save();
         }
     }
 

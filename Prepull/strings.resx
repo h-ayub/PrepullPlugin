@@ -156,4 +156,7 @@
   <data name="RefreshFood" xml:space="preserve">
     <value>Refresh food!</value>
   </data>
+  <data name="RefreshFoodTimer" xml:space="preserve">
+    <value>Refresh food reminder (mins)</value>
+  </data>
 </root>

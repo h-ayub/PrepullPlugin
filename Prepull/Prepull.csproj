@@ -3,9 +3,9 @@
   <Import Project="Dalamud.Plugin.Bootstrap.targets" />
 
   <PropertyGroup>
-    <Version>1.0</Version>
-    <Description>A sample plugin.</Description>
-    <PackageProjectUrl>https://github.com/goatcorp/SamplePlugin</PackageProjectUrl>
+    <Version>1.0.4</Version>
+    <Description>Prepull, a plugin to automate various prepull things in raid like tank stance, fairy, food buffs, and repairing</Description>
+    <PackageProjectUrl>https://github.com/h-ayub/PrepullPlugin</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
