@@ -119,7 +119,7 @@ public sealed class Prepull : IDalamudPlugin
 
         ExecuteTankProtocol(jobId, am, territoryId);
         ExecutePetProtocol(jobId, am, territoryId);
-        //CheckRemainingFoodBuff(territoryId);
+        CheckRemainingFoodBuff(territoryId);
         CheckGear(territoryId);
     }
 
