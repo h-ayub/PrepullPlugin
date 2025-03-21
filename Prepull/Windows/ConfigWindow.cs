@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using Prepull;
@@ -36,6 +37,19 @@ public class ConfigWindow : Window, IDisposable
         if (ImGui.Checkbox(strings.DefaultMainTank, ref defaultMainTank))
         {
             Configuration.DefaultMainTank = defaultMainTank;
+            Configuration.Save();
+        }
+
+        var gearRepairBreakpoint = Configuration.GearRepairBreakpoint / 300;
+        ImGui.SetNextItemWidth(100f * ImGuiHelpers.GlobalScale);
+        if (ImGui.InputInt(strings.GearRepairBreakpoint, ref gearRepairBreakpoint, 1))
+        {
+            if (gearRepairBreakpoint < 1)
+                gearRepairBreakpoint = 1;
+            if (gearRepairBreakpoint > 99)
+                gearRepairBreakpoint = 99;
+
+            Configuration.GearRepairBreakpoint = gearRepairBreakpoint * 300;
             Configuration.Save();
         }
     }

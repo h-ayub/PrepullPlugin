@@ -159,4 +159,10 @@
   <data name="RefreshFoodTimer" xml:space="preserve">
     <value>Refresh food reminder (mins)</value>
   </data>
+  <data name="GearRepairBreakpoint" xml:space="preserve">
+    <value>Breakpoint to repair gear (%)</value>
+  </data>
+  <data name="RepairGear" xml:space="preserve">
+    <value>Repair gear!</value>
+  </data>
 </root>

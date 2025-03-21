@@ -14,6 +14,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.SteamApi.Callbacks;
+using System;
 
 namespace Prepull;
 
@@ -118,7 +119,8 @@ public sealed class Prepull : IDalamudPlugin
 
         ExecuteTankProtocol(jobId, am, territoryId);
         ExecutePetProtocol(jobId, am, territoryId);
-        CheckRemainingFoodBuff(territoryId);
+        //CheckRemainingFoodBuff(territoryId);
+        CheckGear(territoryId);
     }
 
     private bool IsMainTank(byte jobId, ushort territoryId)
@@ -196,6 +198,21 @@ public sealed class Prepull : IDalamudPlugin
             ChatGui.PrintError(strings.RefreshFood);
             UIGlobals.PlayChatSoundEffect(1);
         }
+    }
+
+    private unsafe void CheckGear(ushort territoryId)
+    {
+        if (ClientState.LocalPlayer == null) return;
+        if (IsNormalContent(territoryId) || IsNormalDungeon(territoryId)) return;
+
+        var equipmentScanner = new EquipmentScanner();
+
+        if (equipmentScanner.GearNeedsRepairing(Configuration.GearRepairBreakpoint))
+        {
+            ChatGui.PrintError(strings.RepairGear);
+            UIGlobals.PlayChatSoundEffect(1);
+        }
+        
     }
 
     private unsafe void ExecuteTankProtocol(byte jobId, ActionManager* am, ushort territoryId)
