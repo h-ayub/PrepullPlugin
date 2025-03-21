@@ -1,6 +1,6 @@
 # PrepullPlugin
 
-This is a simple plugin that allows a player to set up whether they want to be the main tank in an instance and/or if they want to summon their fairy for summoner or scholar.
+Prepull, a plugin to automate various prepull things in raid like tank stance, fairy, food buff refresh reminder, and repair reminder
 
 # Installation
 
