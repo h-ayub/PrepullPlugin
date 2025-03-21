@@ -3,7 +3,7 @@
   <Import Project="Dalamud.Plugin.Bootstrap.targets" />
 
   <PropertyGroup>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <Description>Prepull, a plugin to automate various prepull things in raid like tank stance, fairy, food buffs, and repairing</Description>
     <PackageProjectUrl>https://github.com/h-ayub/PrepullPlugin</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
