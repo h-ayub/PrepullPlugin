@@ -209,7 +209,7 @@ public sealed class Prepull : IDalamudPlugin
 
         if (equipmentScanner.GearNeedsRepairing(Configuration.GearRepairBreakpoint))
         {
-            ChatGui.PrintError("Repair gear!");
+            ChatGui.PrintError(strings.RepairGear);
             UIGlobals.PlayChatSoundEffect(1);
         }
         

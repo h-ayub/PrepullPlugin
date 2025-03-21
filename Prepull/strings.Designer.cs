@@ -169,6 +169,15 @@ namespace Prepull {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Repair gear!.
+        /// </summary>
+        internal static string RepairGear {
+            get {
+                return ResourceManager.GetString("RepairGear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show settings.
         /// </summary>
         internal static string ShowSettings {

@@ -162,4 +162,7 @@
   <data name="GearRepairBreakpoint" xml:space="preserve">
     <value>Breakpoint to repair gear (%)</value>
   </data>
+  <data name="RepairGear" xml:space="preserve">
+    <value>Repair gear!</value>
+  </data>
 </root>
