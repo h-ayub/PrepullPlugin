@@ -10,6 +10,7 @@ public class Configuration : IPluginConfiguration
     public int Version { get; set; } = 0;
     public bool DefaultMainTank { get; set; } = false;
     public int FoodBuffRefreshTime { get; set; } = 600;
+    public int GearRepairBreakpoint { get; set; } = 3000; // 300 = 1%
     public Dictionary<ushort, TerritoryConfig> TerritoryConditions = [];
 
     // the below exist just to make saving less cumbersome
