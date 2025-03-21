@@ -100,6 +100,6 @@ public class MainWindow : Window, IDisposable
 
     private unsafe string ReturnTerritoryName(uint territoryId)
     {
-        return Plugin.TerritoryNames[territoryId];
+        return Plugin.TerritoryNames[territoryId].Item1;
     }
 }
