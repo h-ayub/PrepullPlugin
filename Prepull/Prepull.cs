@@ -10,12 +10,9 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using KamiLib.Extensions;
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
-using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Client.UI;
-using FFXIVClientStructs.FFXIV.Component.SteamApi.Callbacks;
-using System;
 using System.Runtime.Versioning;
+using Prepull.Commands;
 
 namespace Prepull;
 
@@ -119,148 +116,7 @@ public sealed class Prepull : IDalamudPlugin
         var territoryId = ClientState.TerritoryType;
         var jobId = playerStatePtr->CurrentClassJobId;
 
-        ExecuteTankProtocol(jobId, am, territoryId);
-        ExecutePetProtocol(jobId, am, territoryId);
-        CheckRemainingFoodBuff(territoryId);
-        CheckGear(territoryId);
-    }
-
-    private bool IsMainTank(byte jobId, ushort territoryId)
-    {
-        if (!Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
-        {
-            value = new Configuration.TerritoryConfig(Configuration.DefaultMainTank, Configuration.FoodBuffRefreshTime);
-            Configuration.TerritoryConditions[territoryId] = value;
-        }
-        return jobId switch
-        {
-            19 => value.IsWarMainTank,
-            21 => value.IsPldMainTank,
-            32 => value.IsDrkMainTank,
-            37 => value.IsGnbMainTank,
-            _ => false,
-        };
-    }
-
-    private bool IsSummonPet(byte jobId, ushort territoryId)
-    {
-        if (!Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
-        {
-            value = new Configuration.TerritoryConfig(Configuration.DefaultMainTank, Configuration.FoodBuffRefreshTime);
-            Configuration.TerritoryConditions[territoryId] = value;
-        }
-        return jobId switch
-        {
-            27 => value.IsSchSummonPet,
-            28 => value.IsSmnSummonPet,
-            _ => false,
-        };
-    }
-
-    private unsafe void ActivateTankStance(byte jobId, ActionManager* am)
-    {
-        uint actionId = jobId switch
-        {
-            19 => 28,       // warrior
-            21 => 48,       // paladin
-            32 => 3629,     // dark knight
-            37 => 16142,    // gunbreaker
-            _ => throw new System.NotImplementedException()
-        };
-
-        if (am->GetActionStatus(ActionType.Action, actionId) == 0)
-        {
-            am->UseAction(ActionType.Action, actionId);
-        }
-    }
-
-    private bool IsNormalDungeon(ushort territoryId)
-    {
-        var type = TerritoryNames[territoryId].Item2;
-        return type == DutyType.Dungeon;
-    }
-
-    private bool IsNormalContent(ushort territoryId)
-    {
-        var type = TerritoryNames[territoryId].Item2;
-        return type == DutyType.NormalRaid || type == DutyType.Alliance || type == DutyType.Trial || type == DutyType.Unknown;
-    }
-
-    private unsafe void CheckRemainingFoodBuff(ushort territoryId)
-    {
-        if (ClientState.LocalPlayer == null) return;
-        if (IsNormalContent(territoryId) || IsNormalDungeon(territoryId)) return;
-
-        var food = ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == 48);
-        var timeRemaining = ClientState.LocalPlayer.StatusList.FirstOrDefault(x => x.StatusId == 48)?.RemainingTime;
-        var refreshTime = Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime;
-
-        if (!food || timeRemaining < refreshTime)
-        {
-            ChatGui.PrintError(strings.RefreshFood);
-            UIGlobals.PlayChatSoundEffect(1);
-        }
-    }
-
-    private unsafe void CheckGear(ushort territoryId)
-    {
-        if (ClientState.LocalPlayer == null) return;
-        if (IsNormalContent(territoryId) || IsNormalDungeon(territoryId)) return;
-
-        var equipmentScanner = new EquipmentScanner();
-
-        if (equipmentScanner.GearNeedsRepairing(Configuration.GearRepairBreakpoint))
-        {
-            ChatGui.PrintError(strings.RepairGear);
-            UIGlobals.PlayChatSoundEffect(1);
-        }
-        
-    }
-
-    private unsafe void ExecuteTankProtocol(byte jobId, ActionManager* am, ushort territoryId)
-    {
-        if (IsNormalContent(territoryId)) return;
-
-        ushort stanceId = jobId switch
-        {
-            19 => 79,   // warrior
-            21 => 91,   // paladin
-            32 => 743,  // dark knight
-            37 => 1833, // gunbreaker
-            _ => 0
-        };
-
-        if (stanceId == 0 || ClientState.LocalPlayer == null)
-            return;
-
-        var stanceActive = ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == stanceId);
-        var mainTankStanceIsOff = !stanceActive && IsMainTank(jobId, territoryId);
-        var offTankStanceIsOn = stanceActive && !IsMainTank(jobId, territoryId);
-
-        if (!IsNormalDungeon(territoryId) && (mainTankStanceIsOff || offTankStanceIsOn))
-        {
-            ActivateTankStance(jobId, am);
-            return;
-        } else if (IsNormalDungeon(territoryId) && !stanceActive)
-        {
-            ActivateTankStance(jobId, am);
-        }
-    }
-
-    private unsafe void ExecutePetProtocol(byte jobId, ActionManager* am, ushort territoryId)
-    {
-        var summonPet = BuddyList.PetBuddy == null &&  (IsNormalDungeon(territoryId) || IsSummonPet(jobId, territoryId));
-
-        if (jobId == 27 && summonPet) // scholar
-        {
-            if (am->GetActionStatus(ActionType.Action, 25798) != 0) return;
-            am->UseAction(ActionType.Action, 25798);
-        }
-
-        if (jobId == 28 && summonPet) // summoner
-        {
-            if (am->GetActionStatus(ActionType.Action, 17215) != 0) return;
-            am->UseAction(ActionType.Action, 17215);
-        }
+        var executor = new CommandsExecutor(Configuration, TerritoryNames, ChatGui, BuddyList, ClientState);
+        executor.ExecuteAll(territoryId, jobId, am);
     }
 }
