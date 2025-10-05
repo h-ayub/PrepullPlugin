@@ -1,10 +1,12 @@
 using Dalamud.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Versioning;
 
 namespace Prepull;
 
 [Serializable]
+[SupportedOSPlatform("windows")]
 public class Configuration : IPluginConfiguration
 {
     public int Version { get; set; } = 0;
