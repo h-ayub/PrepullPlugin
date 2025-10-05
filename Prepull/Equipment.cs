@@ -39,7 +39,7 @@ namespace Prepull
 
             for (var i = 0; i < EquipmentContainerSize; i++, inventoryItem++)
             {
-                if (inventoryItem->Condition <= gearRepairBreakpoint)
+                if (inventoryItem->Condition <= (ushort)gearRepairBreakpoint)
                     return true;
             }
 
