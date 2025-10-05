@@ -2,8 +2,7 @@ using System;
 using System.Numerics;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
-using ImGuiNET;
-using Prepull;
+using Dalamud.Bindings.ImGui;
 
 namespace Prepull.Windows;
 
