@@ -3,9 +3,11 @@ using System.Numerics;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using Dalamud.Bindings.ImGui;
+using System.Runtime.Versioning;
 
 namespace Prepull.Windows;
 
+[SupportedOSPlatform("windows")]
 public class ConfigWindow : Window, IDisposable
 {
     private Configuration Configuration;

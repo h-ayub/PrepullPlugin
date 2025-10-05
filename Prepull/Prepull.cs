@@ -15,9 +15,11 @@ using Dalamud.Game.Text.SeStringHandling;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.SteamApi.Callbacks;
 using System;
+using System.Runtime.Versioning;
 
 namespace Prepull;
 
+[SupportedOSPlatform("windows")]
 public sealed class Prepull : IDalamudPlugin
 {
     [PluginService] internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;

@@ -5,9 +5,11 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Dalamud.Bindings.ImGui;
+using System.Runtime.Versioning;
 
 namespace Prepull.Windows;
 
+[SupportedOSPlatform("windows")]
 public class MainWindow : Window, IDisposable
 {
     private Prepull Plugin;
