@@ -116,7 +116,7 @@ public sealed class Prepull : IDalamudPlugin
         var territoryId = ClientState.TerritoryType;
         var jobId = playerStatePtr->CurrentClassJobId;
 
-        var executor = new CommandsExecutor(Configuration, TerritoryNames, ChatGui, BuddyList, ClientState);
-        executor.ExecuteAll(territoryId, jobId, am);
+        var executor = new CommandsExecutor(Configuration, TerritoryNames, ChatGui, ClientState, BuddyList);
+        executor.ExecuteAllChecks(territoryId, jobId, am);
     }
 }

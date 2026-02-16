@@ -1,22 +1,17 @@
-using Dalamud.IoC;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using KamiLib.Extensions;
-using System;
+using Prepull.Classes.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Prepull.Commands
+namespace Prepull.Classes.Repositories
 {
     [SupportedOSPlatform("windows")]
-
-    public class TankCommands : BaseCommands
+    public class TankRepository : BaseRepository, ITankRepository
     {
-        public TankCommands(Configuration configuration, Dictionary<uint, (string, DutyType)> territoryNames, IChatGui chatGui, IClientState clientState, IBuddyList buddyList) : base(configuration, territoryNames, chatGui, clientState, buddyList) 
+        public TankRepository(Configuration configuration, Dictionary<uint, (string, DutyType)> territoryNames, IChatGui chatGui, IClientState clientState, IBuddyList buddyList) : base(configuration, territoryNames, chatGui, clientState, buddyList)
         {
         }
         private bool IsMainTank(byte jobId, ushort territoryId)
@@ -53,7 +48,7 @@ namespace Prepull.Commands
             }
         }
 
-        public unsafe void ExecuteTankProtocol(byte jobId, ActionManager* am, ushort territoryId)
+        public unsafe void ExecuteTankCheck(byte jobId, ActionManager* am, ushort territoryId)
         {
             if (IsNormalContent(territoryId)) return;
 
