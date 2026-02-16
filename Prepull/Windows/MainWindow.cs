@@ -12,10 +12,10 @@ namespace Prepull.Windows;
 [SupportedOSPlatform("windows")]
 public class MainWindow : Window, IDisposable
 {
-    private Prepull Plugin;
+    private PrepullPlugin Plugin;
     private unsafe PlayerState* playerStatePtr = PlayerState.Instance();
 
-    public MainWindow(Prepull plugin)
+    public MainWindow(PrepullPlugin plugin)
         : base(strings.MainWindowTitle, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         SizeConstraints = new WindowSizeConstraints
@@ -32,13 +32,13 @@ public class MainWindow : Window, IDisposable
     public unsafe override void Draw()
     {
         // need to only draw if we are in an instance
-        if (!Prepull.Condition[ConditionFlag.BoundByDuty])
+        if (!PrepullPlugin.Condition[ConditionFlag.BoundByDuty])
         {
             ImGui.Text(strings.NotInInstance);
             return;
         }
 
-        var territoryId = Prepull.ClientState.TerritoryType;   // get territory id
+        var territoryId = PrepullPlugin.ClientState.TerritoryType;   // get territory id
         
         if (!Plugin.Configuration.TerritoryConditions.ContainsKey(territoryId)) // check if we do not have data on this territory
         {

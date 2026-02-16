@@ -18,7 +18,7 @@ public class Configuration : IPluginConfiguration
     // the below exist just to make saving less cumbersome
     public void Save()
     {
-        Prepull.PluginInterface.SavePluginConfig(this);
+        PrepullPlugin.PluginInterface.SavePluginConfig(this);
     }
 
     [Serializable]

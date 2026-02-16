@@ -17,7 +17,7 @@ using Prepull.Commands;
 namespace Prepull;
 
 [SupportedOSPlatform("windows")]
-public sealed class Prepull : IDalamudPlugin
+public sealed class PrepullPlugin : IDalamudPlugin
 {
     [PluginService] internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
     [PluginService] internal static ITextureProvider TextureProvider { get; private set; } = null!;
@@ -40,7 +40,7 @@ public sealed class Prepull : IDalamudPlugin
 
     internal Dictionary<uint, (string, DutyType)> TerritoryNames = [];
 
-    public Prepull()
+    public PrepullPlugin()
     {
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
