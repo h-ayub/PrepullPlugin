@@ -6,6 +6,18 @@ using System.Runtime.Versioning;
 namespace Prepull;
 
 [Serializable]
+public class TerritoryConfig(bool defaultMainTank, int foodBuffRefreshTime)
+{
+    public bool IsWarMainTank { get; set; } = defaultMainTank;
+    public bool IsPldMainTank { get; set; } = defaultMainTank;
+    public bool IsDrkMainTank { get; set; } = defaultMainTank;
+    public bool IsGnbMainTank { get; set; } = defaultMainTank;
+    public bool IsSchSummonPet { get; set; } = true;
+    public bool IsSmnSummonPet { get; set; } = true;
+    public int FoodBuffRefreshTime { get; set; } = foodBuffRefreshTime;
+}
+
+[Serializable]
 [SupportedOSPlatform("windows")]
 public class Configuration : IPluginConfiguration
 {
@@ -19,17 +31,5 @@ public class Configuration : IPluginConfiguration
     public void Save()
     {
         PrepullPlugin.PluginInterface.SavePluginConfig(this);
-    }
-
-    [Serializable]
-    public class TerritoryConfig(bool defaultMainTank, int foodBuffRefreshTime)
-    {
-        public bool IsWarMainTank { get; set; } = defaultMainTank;
-        public bool IsPldMainTank { get; set; } = defaultMainTank;
-        public bool IsDrkMainTank { get; set; } = defaultMainTank;
-        public bool IsGnbMainTank { get; set; } = defaultMainTank;
-        public bool IsSchSummonPet { get; set; } = true;
-        public bool IsSmnSummonPet { get; set; } = true;
-        public int FoodBuffRefreshTime { get; set; } = foodBuffRefreshTime;
     }
 }
