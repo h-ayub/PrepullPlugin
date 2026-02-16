@@ -14,7 +14,7 @@ public class ConfigWindow : Window, IDisposable
     // We give this window a constant ID using ###
     // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
     // and the window ID will always be "###XYZ counter window" for ImGui
-    public ConfigWindow(PrepullPlugin plugin) : base(strings.ConfigWindowTitle)
+    public ConfigWindow(PrepullPlugin plugin) : base(PrepullStrings.ConfigWindowTitle)
     {
         SizeConstraints = new WindowSizeConstraints
         {
@@ -33,7 +33,7 @@ public class ConfigWindow : Window, IDisposable
     public override void Draw()
     {
         var defaultMainTank = PrepullSystem.Configuration.DefaultMainTank;
-        if (ImGui.Checkbox(strings.DefaultMainTank, ref defaultMainTank))
+        if (ImGui.Checkbox(PrepullStrings.DefaultMainTank, ref defaultMainTank))
         {
             PrepullSystem.Configuration.DefaultMainTank = defaultMainTank;
             PrepullSystem.Configuration.Save();
@@ -41,7 +41,7 @@ public class ConfigWindow : Window, IDisposable
 
         var gearRepairBreakpoint = PrepullSystem.Configuration.GearRepairBreakpoint / 300;
         ImGui.SetNextItemWidth(100f * ImGuiHelpers.GlobalScale);
-        if (ImGui.InputInt(strings.GearRepairBreakpoint, ref gearRepairBreakpoint, 1))
+        if (ImGui.InputInt(PrepullStrings.GearRepairBreakpoint, ref gearRepairBreakpoint, 1))
         {
             if (gearRepairBreakpoint < 1)
                 gearRepairBreakpoint = 1;

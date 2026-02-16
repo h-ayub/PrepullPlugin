@@ -32,12 +32,12 @@ public sealed class PrepullPlugin : IDalamudPlugin
 
         PrepullPluginServices.CommandManager.AddHandler(OpenMainWindow, new CommandInfo(OnMainUICommand)
         {
-            HelpMessage = strings.HelpMessageMainWindow
+            HelpMessage = PrepullStrings.HelpMessageMainWindow
         });
 
         PrepullPluginServices.CommandManager.AddHandler(OpenConfigWindow, new CommandInfo(OnConfigUICommand)
         {
-            HelpMessage = strings.HelpMessageConfigWindow
+            HelpMessage = PrepullStrings.HelpMessageConfigWindow
         });
 
         PrepullPluginServices.PluginInterface.UiBuilder.Draw += DrawUI;
@@ -89,7 +89,7 @@ public sealed class PrepullPlugin : IDalamudPlugin
     public void ToggleConfigUI() => ConfigWindow.Toggle();
     public void ToggleMainUI() => MainWindow.Toggle();
 
-    private unsafe void ActivatePrepull(object? sender, ushort e)
+    private void ActivatePrepull(object? sender, ushort e)
     {   
         var executor = new PrepullExecutor();
         executor.ExecuteAllChecks();

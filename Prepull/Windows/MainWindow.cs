@@ -16,7 +16,7 @@ public class MainWindow : Window, IDisposable
     private unsafe PlayerState* playerStatePtr = PlayerState.Instance();
 
     public MainWindow(PrepullPlugin plugin)
-        : base(strings.MainWindowTitle, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+        : base(PrepullStrings.MainWindowTitle, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         SizeConstraints = new WindowSizeConstraints
         {
@@ -34,7 +34,7 @@ public class MainWindow : Window, IDisposable
         // need to only draw if we are in an instance
         if (!PrepullPluginServices.Condition[ConditionFlag.BoundByDuty])
         {
-            ImGui.Text(strings.NotInInstance);
+            ImGui.Text(PrepullStrings.NotInInstance);
             return;
         }
 
@@ -59,7 +59,7 @@ public class MainWindow : Window, IDisposable
                 32 => config.IsDrkMainTank,
                 37 => config.IsGnbMainTank,
             };
-            if (ImGui.Checkbox(strings.ToggleMainTank, ref isMainTank))
+            if (ImGui.Checkbox(PrepullStrings.ToggleMainTank, ref isMainTank))
             {
                 switch (jobId)
                 {
@@ -85,7 +85,7 @@ public class MainWindow : Window, IDisposable
                 27 => config.IsSchSummonPet,
                 28 => config.IsSmnSummonPet
             };
-            if (ImGui.Checkbox(strings.SummonPet, ref summonPet))
+            if (ImGui.Checkbox(PrepullStrings.SummonPet, ref summonPet))
             {
                 switch (jobId)
                 {
@@ -102,7 +102,7 @@ public class MainWindow : Window, IDisposable
 
         var foodRefreshTime = PrepullSystem.Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime/60;
         ImGui.SetNextItemWidth(100f * ImGuiHelpers.GlobalScale);
-        if (ImGui.InputInt(strings.RefreshFoodTimer, ref foodRefreshTime, 1))
+        if (ImGui.InputInt(PrepullStrings.RefreshFoodTimer, ref foodRefreshTime, 1))
         {
             if (foodRefreshTime < 1) 
                 foodRefreshTime = 1;

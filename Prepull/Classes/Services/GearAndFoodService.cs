@@ -10,7 +10,7 @@ namespace Prepull.Classes.Repositories
     public class GearAndFoodService : BaseService, IGearAndFoodService
     {
         public GearAndFoodService() : base() { }
-        private unsafe void CheckRemainingFoodBuff(ushort territoryId)
+        private void CheckRemainingFoodBuff(ushort territoryId)
         {
             if (PrepullPluginServices.ClientState.LocalPlayer == null) return;
             if (IsNormalContent(territoryId) || IsNormalDungeon(territoryId)) return;
@@ -21,12 +21,12 @@ namespace Prepull.Classes.Repositories
 
             if (!food || timeRemaining < refreshTime)
             {
-                PrepullPluginServices.ChatGui.PrintError(strings.RefreshFood);
+                PrepullPluginServices.ChatGui.PrintError(PrepullStrings.RefreshFood);
                 UIGlobals.PlayChatSoundEffect(1);
             }
         }
 
-        private unsafe void CheckGear(ushort territoryId)
+        private void CheckGear(ushort territoryId)
         {
             if (PrepullPluginServices.ClientState.LocalPlayer == null) return;
             if (IsNormalContent(territoryId) || IsNormalDungeon(territoryId)) return;
@@ -35,11 +35,11 @@ namespace Prepull.Classes.Repositories
 
             if (equipmentScanner.GearNeedsRepairing(PrepullSystem.Configuration.GearRepairBreakpoint))
             {
-                PrepullPluginServices.ChatGui.PrintError(strings.RepairGear);
+                PrepullPluginServices.ChatGui.PrintError(PrepullStrings.RepairGear);
                 UIGlobals.PlayChatSoundEffect(1);
             }
         }
-        public unsafe void ExecuteGearAndFoodCheck(ushort territoryId)
+        public void ExecuteGearAndFoodCheck(ushort territoryId)
         {
             CheckRemainingFoodBuff(territoryId);
             CheckGear(territoryId);
