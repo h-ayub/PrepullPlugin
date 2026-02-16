@@ -1,11 +1,12 @@
 using Dalamud.Game.Command;
+using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
-using Prepull.Windows;
-using Lumina.Excel.Sheets;
-using System.Linq;
 using KamiLib.Extensions;
-using System.Runtime.Versioning;
+using Lumina.Excel.Sheets;
 using Prepull.Classes.Executors;
+using Prepull.Windows;
+using System.Linq;
+using System.Runtime.Versioning;
 
 namespace Prepull;
 
@@ -14,17 +15,20 @@ public sealed class PrepullPlugin : IDalamudPlugin
 {
     private const string OpenMainWindow = "/ppp";
     private const string OpenConfigWindow = "/ppc";
+    public static ConfigWindow ConfigWindow { get; set; }
+    public static MainWindow MainWindow { get; set; }
+    private readonly static WindowSystem WindowSystem = new("Prepull");
 
     public PrepullPlugin(IDalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<PrepullPluginServices>();
         PrepullSystem.Configuration = PrepullPluginServices.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
-        PrepullSystem.ConfigWindow = new ConfigWindow(this);
-        PrepullSystem.MainWindow = new MainWindow(this);
+        ConfigWindow = new ConfigWindow(this);
+        MainWindow = new MainWindow(this);
 
-        PrepullSystem.WindowSystem.AddWindow(PrepullSystem.ConfigWindow);
-        PrepullSystem.WindowSystem.AddWindow(PrepullSystem.MainWindow);
+        WindowSystem.AddWindow(ConfigWindow);
+        WindowSystem.AddWindow(MainWindow);
 
         PrepullPluginServices.CommandManager.AddHandler(OpenMainWindow, new CommandInfo(OnMainUICommand)
         {
@@ -58,10 +62,10 @@ public sealed class PrepullPlugin : IDalamudPlugin
 
     public void Dispose()
     {
-        PrepullSystem.WindowSystem.RemoveAllWindows();
+        WindowSystem.RemoveAllWindows();
 
-        PrepullSystem.ConfigWindow.Dispose();
-        PrepullSystem.MainWindow.Dispose();
+        ConfigWindow.Dispose();
+        MainWindow.Dispose();
 
         PrepullPluginServices.DutyState.DutyStarted -= ActivatePrepull;
         PrepullPluginServices.DutyState.DutyRecommenced -= ActivatePrepull;
@@ -80,10 +84,10 @@ public sealed class PrepullPlugin : IDalamudPlugin
         ToggleConfigUI();
     }
 
-    private void DrawUI() => PrepullSystem.WindowSystem.Draw();
+    private void DrawUI() => WindowSystem.Draw();
 
-    public void ToggleConfigUI() => PrepullSystem.ConfigWindow.Toggle();
-    public void ToggleMainUI() => PrepullSystem.MainWindow.Toggle();
+    public void ToggleConfigUI() => ConfigWindow.Toggle();
+    public void ToggleMainUI() => MainWindow.Toggle();
 
     private unsafe void ActivatePrepull(object? sender, ushort e)
     {   
