@@ -1,17 +1,11 @@
 using Dalamud.Game.Command;
-using Dalamud.IoC;
 using Dalamud.Plugin;
-using Dalamud.Interface.Windowing;
-using Dalamud.Plugin.Services;
 using Prepull.Windows;
-using System.Collections.Generic;
 using Lumina.Excel.Sheets;
 using System.Linq;
-using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using KamiLib.Extensions;
 using System.Runtime.Versioning;
-using Prepull.Commands;
+using Prepull.Classes.Executors;
 
 namespace Prepull;
 
@@ -93,12 +87,7 @@ public sealed class PrepullPlugin : IDalamudPlugin
 
     private unsafe void ActivatePrepull(object? sender, ushort e)
     {   
-        var am = ActionManager.Instance();
-        var playerStatePtr = PlayerState.Instance();
-        var territoryId = PrepullServices.ClientState.TerritoryType;
-        var jobId = playerStatePtr->CurrentClassJobId;
-
-        var executor = new CommandsExecutor(PrepullSystem.Configuration, PrepullSystem.TerritoryNames, PrepullServices.ChatGui, PrepullServices.ClientState, PrepullServices.BuddyList);
-        executor.ExecuteAllChecks(territoryId, jobId, am);
+        var executor = new PrepullExecutor();
+        executor.ExecuteAllChecks();
     }
 }

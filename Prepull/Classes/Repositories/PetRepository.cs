@@ -1,9 +1,5 @@
-using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using KamiLib.Extensions;
 using Prepull.Classes.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Runtime.Versioning;
 
 namespace Prepull.Classes.Repositories
@@ -11,16 +7,14 @@ namespace Prepull.Classes.Repositories
     [SupportedOSPlatform("windows")]
     public class PetRepository : BaseRepository, IPetRepository
     {
-        public PetRepository(Configuration configuration, Dictionary<uint, (string, DutyType)> territoryNames, IChatGui chatGui, IClientState clientState, IBuddyList buddyList) : base(configuration, territoryNames, chatGui, clientState, buddyList)
-        {
-        }
+        public PetRepository() : base() { }
 
         private bool IsSummonPet(byte jobId, ushort territoryId)
         {
-            if (!Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
+            if (!PrepullSystem.Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
             {
-                value = new TerritoryConfig(Configuration.DefaultMainTank, Configuration.FoodBuffRefreshTime);
-                Configuration.TerritoryConditions[territoryId] = value;
+                value = new TerritoryConfig(PrepullSystem.Configuration.DefaultMainTank, PrepullSystem.Configuration.FoodBuffRefreshTime);
+                PrepullSystem.Configuration.TerritoryConditions[territoryId] = value;
             }
             return jobId switch
             {
@@ -31,7 +25,7 @@ namespace Prepull.Classes.Repositories
         }
         public unsafe void ExecutePetCheck(byte jobId, ActionManager* am, ushort territoryId)
         {
-            var summonPet = BuddyList.PetBuddy == null && (IsNormalDungeon(territoryId) || IsSummonPet(jobId, territoryId));
+            var summonPet = PrepullServices.BuddyList.PetBuddy == null && (IsNormalDungeon(territoryId) || IsSummonPet(jobId, territoryId));
 
             if (jobId == 27 && summonPet) // scholar
             {

@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 // Credit to RepairMe plugin
-namespace Prepull
+namespace Prepull.Classes.Helpers
 {
     public unsafe class EquipmentScanner
     {

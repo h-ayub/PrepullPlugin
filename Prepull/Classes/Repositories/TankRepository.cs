@@ -1,8 +1,7 @@
+using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using KamiLib.Extensions;
 using Prepull.Classes.Interfaces;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
 
@@ -11,15 +10,13 @@ namespace Prepull.Classes.Repositories
     [SupportedOSPlatform("windows")]
     public class TankRepository : BaseRepository, ITankRepository
     {
-        public TankRepository(Configuration configuration, Dictionary<uint, (string, DutyType)> territoryNames, IChatGui chatGui, IClientState clientState, IBuddyList buddyList) : base(configuration, territoryNames, chatGui, clientState, buddyList)
-        {
-        }
+        public TankRepository() : base() { }
         private bool IsMainTank(byte jobId, ushort territoryId)
         {
-            if (!Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
+            if (!PrepullSystem.Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
             {
-                value = new TerritoryConfig(Configuration.DefaultMainTank, Configuration.FoodBuffRefreshTime);
-                Configuration.TerritoryConditions[territoryId] = value;
+                value = new TerritoryConfig(PrepullSystem.Configuration.DefaultMainTank, PrepullSystem.Configuration.FoodBuffRefreshTime);
+                PrepullSystem.Configuration.TerritoryConditions[territoryId] = value;
             }
             return jobId switch
             {
@@ -60,10 +57,10 @@ namespace Prepull.Classes.Repositories
                 _ => 0
             };
 
-            if (stanceId == 0 || ClientState.LocalPlayer == null)
+            if (stanceId == 0 || PrepullServices.ClientState.LocalPlayer == null)
                 return;
 
-            var stanceActive = ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == stanceId);
+            var stanceActive = PrepullServices.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == stanceId);
             var mainTankStanceIsOff = !stanceActive && IsMainTank(jobId, territoryId);
             var offTankStanceIsOn = stanceActive && !IsMainTank(jobId, territoryId);
 
