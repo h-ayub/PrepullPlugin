@@ -32,13 +32,13 @@ public class MainWindow : Window, IDisposable
     public unsafe override void Draw()
     {
         // need to only draw if we are in an instance
-        if (!PrepullServices.Condition[ConditionFlag.BoundByDuty])
+        if (!PrepullPluginServices.Condition[ConditionFlag.BoundByDuty])
         {
             ImGui.Text(strings.NotInInstance);
             return;
         }
 
-        var territoryId = PrepullServices.ClientState.TerritoryType;   // get territory id
+        var territoryId = PrepullPluginServices.ClientState.TerritoryType;   // get territory id
         
         if (!PrepullSystem.Configuration.TerritoryConditions.ContainsKey(territoryId)) // check if we do not have data on this territory
         {

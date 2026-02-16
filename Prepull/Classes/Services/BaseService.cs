@@ -4,9 +4,9 @@ using System.Runtime.Versioning;
 namespace Prepull.Classes.Repositories
 {
     [SupportedOSPlatform("windows")]
-    public abstract class BaseRepository
+    public abstract class BaseService
     {
-        protected BaseRepository() 
+        protected BaseService() 
         { 
         }
 

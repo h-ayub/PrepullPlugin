@@ -1,6 +1,6 @@
 namespace Prepull.Classes.Interfaces
 {
-    public interface IGearAndFoodRepository : IBaseRepository
+    public interface IGearAndFoodService : IBaseService
     {
         public unsafe void ExecuteGearAndFoodCheck(ushort territoryId);
     }

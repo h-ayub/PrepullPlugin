@@ -8,22 +8,22 @@ namespace Prepull.Classes.Executors
     [SupportedOSPlatform("windows")]
     public class PrepullExecutor
     {
-        private readonly GearAndFoodRepository gearAndFoodRepository;
-        private readonly PetRepository petRepository;
-        private readonly TankRepository tankRepository;
+        private readonly GearAndFoodService gearAndFoodRepository;
+        private readonly PetService petRepository;
+        private readonly TankService tankRepository;
 
         public PrepullExecutor()
         {
-            this.gearAndFoodRepository = new GearAndFoodRepository();
-            this.petRepository = new PetRepository();
-            this.tankRepository = new TankRepository();
+            this.gearAndFoodRepository = new GearAndFoodService();
+            this.petRepository = new PetService();
+            this.tankRepository = new TankService();
         }
 
         public unsafe void ExecuteAllChecks()
         {
             var am = ActionManager.Instance();
             var playerStatePtr = PlayerState.Instance();
-            var territoryId = PrepullServices.ClientState.TerritoryType;
+            var territoryId = PrepullPluginServices.ClientState.TerritoryType;
             var jobId = playerStatePtr->CurrentClassJobId;
             gearAndFoodRepository.ExecuteGearAndFoodCheck(territoryId);
             petRepository.ExecutePetCheck(jobId, am, territoryId);

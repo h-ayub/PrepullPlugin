@@ -17,8 +17,8 @@ public sealed class PrepullPlugin : IDalamudPlugin
 
     public PrepullPlugin(IDalamudPluginInterface pluginInterface)
     {
-        pluginInterface.Create<PrepullServices>();
-        PrepullSystem.Configuration = PrepullServices.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+        pluginInterface.Create<PrepullPluginServices>();
+        PrepullSystem.Configuration = PrepullPluginServices.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
         PrepullSystem.ConfigWindow = new ConfigWindow(this);
         PrepullSystem.MainWindow = new MainWindow(this);
@@ -26,34 +26,34 @@ public sealed class PrepullPlugin : IDalamudPlugin
         PrepullSystem.WindowSystem.AddWindow(PrepullSystem.ConfigWindow);
         PrepullSystem.WindowSystem.AddWindow(PrepullSystem.MainWindow);
 
-        PrepullServices.CommandManager.AddHandler(OpenMainWindow, new CommandInfo(OnMainUICommand)
+        PrepullPluginServices.CommandManager.AddHandler(OpenMainWindow, new CommandInfo(OnMainUICommand)
         {
             HelpMessage = strings.HelpMessageMainWindow
         });
 
-        PrepullServices.CommandManager.AddHandler(OpenConfigWindow, new CommandInfo(OnConfigUICommand)
+        PrepullPluginServices.CommandManager.AddHandler(OpenConfigWindow, new CommandInfo(OnConfigUICommand)
         {
             HelpMessage = strings.HelpMessageConfigWindow
         });
 
-        PrepullServices.PluginInterface.UiBuilder.Draw += DrawUI;
+        PrepullPluginServices.PluginInterface.UiBuilder.Draw += DrawUI;
 
         // This adds a button to the plugin installer entry of this plugin which allows
         // to toggle the display status of the configuration ui
-        PrepullServices.PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
+        PrepullPluginServices.PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
 
         // Adds another button that is doing the same but for the main ui of the plugin
-        PrepullServices.PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
+        PrepullPluginServices.PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
 
         // This event is triggered when the player starts a duty
-        PrepullServices.DutyState.DutyStarted += ActivatePrepull;
-        PrepullServices.DutyState.DutyRecommenced += ActivatePrepull;
+        PrepullPluginServices.DutyState.DutyStarted += ActivatePrepull;
+        PrepullPluginServices.DutyState.DutyRecommenced += ActivatePrepull;
 
         // This fetches the territory names from excel sheet in dalamud repository
-        PrepullSystem.TerritoryNames = PrepullServices.DataManager.GetExcelSheet<TerritoryType>().Where(x => x.PlaceName.ValueNullable?.Name.ToString().Length > 0)
+        PrepullSystem.TerritoryNames = PrepullPluginServices.DataManager.GetExcelSheet<TerritoryType>().Where(x => x.PlaceName.ValueNullable?.Name.ToString().Length > 0)
             .ToDictionary(x => x.RowId,
                 x => ($"{x.PlaceName.ValueNullable?.Name} {(x.ContentFinderCondition.ValueNullable?.Name.ToString().Length > 0 ? $" ({x.ContentFinderCondition.ValueNullable?.Name})" : string.Empty)}",
-                        PrepullServices.DataManager.GetDutyType(x.ContentFinderCondition.Value)));
+                        PrepullPluginServices.DataManager.GetDutyType(x.ContentFinderCondition.Value)));
     }
 
     public void Dispose()
@@ -63,10 +63,10 @@ public sealed class PrepullPlugin : IDalamudPlugin
         PrepullSystem.ConfigWindow.Dispose();
         PrepullSystem.MainWindow.Dispose();
 
-        PrepullServices.DutyState.DutyStarted -= ActivatePrepull;
-        PrepullServices.DutyState.DutyRecommenced -= ActivatePrepull;
+        PrepullPluginServices.DutyState.DutyStarted -= ActivatePrepull;
+        PrepullPluginServices.DutyState.DutyRecommenced -= ActivatePrepull;
 
-        PrepullServices.CommandManager.RemoveHandler(OpenMainWindow);
+        PrepullPluginServices.CommandManager.RemoveHandler(OpenMainWindow);
     }
 
     private void OnMainUICommand(string command, string args)

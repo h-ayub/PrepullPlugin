@@ -8,9 +8,9 @@ using System.Runtime.Versioning;
 namespace Prepull.Classes.Repositories
 {
     [SupportedOSPlatform("windows")]
-    public class TankRepository : BaseRepository, ITankRepository
+    public class TankService : BaseService, ITankService
     {
-        public TankRepository() : base() { }
+        public TankService() : base() { }
         private bool IsMainTank(byte jobId, ushort territoryId)
         {
             if (!PrepullSystem.Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
@@ -57,10 +57,10 @@ namespace Prepull.Classes.Repositories
                 _ => 0
             };
 
-            if (stanceId == 0 || PrepullServices.ClientState.LocalPlayer == null)
+            if (stanceId == 0 || PrepullPluginServices.ClientState.LocalPlayer == null)
                 return;
 
-            var stanceActive = PrepullServices.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == stanceId);
+            var stanceActive = PrepullPluginServices.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == stanceId);
             var mainTankStanceIsOff = !stanceActive && IsMainTank(jobId, territoryId);
             var offTankStanceIsOn = stanceActive && !IsMainTank(jobId, territoryId);
 

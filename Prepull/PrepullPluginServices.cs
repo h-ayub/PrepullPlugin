@@ -5,7 +5,7 @@ using Dalamud.Plugin.Services;
 namespace Prepull;
 
 #pragma warning disable CS8618
-internal class PrepullServices
+internal class PrepullPluginServices
 {
     [PluginService] public static IDalamudPluginInterface PluginInterface { get; set; }
     [PluginService] public static ITextureProvider TextureProvider { get; set; }

@@ -1,7 +1,7 @@
 
 namespace Prepull.Classes.Interfaces
 {
-    public interface IBaseRepository
+    public interface IBaseService
     {
         bool IsNormalDungeon(ushort territoryId);
         bool IsNormalContent(ushort territoryId);

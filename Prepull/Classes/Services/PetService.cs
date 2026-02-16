@@ -5,9 +5,9 @@ using System.Runtime.Versioning;
 namespace Prepull.Classes.Repositories
 {
     [SupportedOSPlatform("windows")]
-    public class PetRepository : BaseRepository, IPetRepository
+    public class PetService : BaseService, IPetService
     {
-        public PetRepository() : base() { }
+        public PetService() : base() { }
 
         private bool IsSummonPet(byte jobId, ushort territoryId)
         {
@@ -25,7 +25,7 @@ namespace Prepull.Classes.Repositories
         }
         public unsafe void ExecutePetCheck(byte jobId, ActionManager* am, ushort territoryId)
         {
-            var summonPet = PrepullServices.BuddyList.PetBuddy == null && (IsNormalDungeon(territoryId) || IsSummonPet(jobId, territoryId));
+            var summonPet = PrepullPluginServices.BuddyList.PetBuddy == null && (IsNormalDungeon(territoryId) || IsSummonPet(jobId, territoryId));
 
             if (jobId == 27 && summonPet) // scholar
             {
