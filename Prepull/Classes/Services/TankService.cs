@@ -1,5 +1,3 @@
-using Dalamud.Plugin;
-using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using Prepull.Classes.Interfaces;
 using System.Linq;
