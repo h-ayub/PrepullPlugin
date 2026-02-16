@@ -32,17 +32,17 @@ public class MainWindow : Window, IDisposable
     public unsafe override void Draw()
     {
         // need to only draw if we are in an instance
-        if (!PrepullPlugin.Condition[ConditionFlag.BoundByDuty])
+        if (!PrepullServices.Condition[ConditionFlag.BoundByDuty])
         {
             ImGui.Text(strings.NotInInstance);
             return;
         }
 
-        var territoryId = PrepullPlugin.ClientState.TerritoryType;   // get territory id
+        var territoryId = PrepullServices.ClientState.TerritoryType;   // get territory id
         
-        if (!Plugin.Configuration.TerritoryConditions.ContainsKey(territoryId)) // check if we do not have data on this territory
+        if (!PrepullSystem.Configuration.TerritoryConditions.ContainsKey(territoryId)) // check if we do not have data on this territory
         {
-            Plugin.Configuration.TerritoryConditions[territoryId] = new Configuration.TerritoryConfig(Plugin.Configuration.DefaultMainTank, Plugin.Configuration.FoodBuffRefreshTime);
+            PrepullSystem.Configuration.TerritoryConditions[territoryId] = new TerritoryConfig(PrepullSystem.Configuration.DefaultMainTank, PrepullSystem.Configuration.FoodBuffRefreshTime);
         }
 
         var jobId = playerStatePtr->CurrentClassJobId;
@@ -51,13 +51,13 @@ public class MainWindow : Window, IDisposable
 
         if (jobId == 19 || jobId == 21 || jobId == 32 || jobId == 37)   // tanks: warrior, paladin, dark knight, gunbreaker
         {
-            var config = Plugin.Configuration.TerritoryConditions[territoryId];
+            var config = PrepullSystem.Configuration.TerritoryConditions[territoryId];
             var isMainTank = jobId switch
             {
                 19 => config.IsWarMainTank,
                 21 => config.IsPldMainTank,
                 32 => config.IsDrkMainTank,
-                37 => config.IsGnbMainTank
+                37 => config.IsGnbMainTank,
             };
             if (ImGui.Checkbox(strings.ToggleMainTank, ref isMainTank))
             {
@@ -76,11 +76,11 @@ public class MainWindow : Window, IDisposable
                         config.IsGnbMainTank = isMainTank;
                         break;
                 }
-                Plugin.Configuration.Save();
+                PrepullSystem.Configuration.Save();
             }
         } else if (jobId == 28 || jobId == 27)  // scholar, summoner
         {
-            var config = Plugin.Configuration.TerritoryConditions[territoryId];
+            var config = PrepullSystem.Configuration.TerritoryConditions[territoryId];
             var summonPet = jobId switch {
                 27 => config.IsSchSummonPet,
                 28 => config.IsSmnSummonPet
@@ -96,11 +96,11 @@ public class MainWindow : Window, IDisposable
                         config.IsSmnSummonPet = summonPet;
                         break;
                 }
-                Plugin.Configuration.Save();
+                PrepullSystem.Configuration.Save();
             }
         }
 
-        var foodRefreshTime = Plugin.Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime/60;
+        var foodRefreshTime = PrepullSystem.Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime/60;
         ImGui.SetNextItemWidth(100f * ImGuiHelpers.GlobalScale);
         if (ImGui.InputInt(strings.RefreshFoodTimer, ref foodRefreshTime, 1))
         {
@@ -109,13 +109,13 @@ public class MainWindow : Window, IDisposable
             if (foodRefreshTime > 20)
                 foodRefreshTime = 20;
 
-            Plugin.Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime = foodRefreshTime*60;
-            Plugin.Configuration.Save();
+            PrepullSystem.Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime = foodRefreshTime*60;
+            PrepullSystem.Configuration.Save();
         }
     }
 
     private unsafe string ReturnTerritoryName(uint territoryId)
     {
-        return Plugin.TerritoryNames[territoryId].Item1;
+        return PrepullSystem.TerritoryNames[territoryId].Item1;
     }
 }

@@ -10,7 +10,6 @@ namespace Prepull.Windows;
 [SupportedOSPlatform("windows")]
 public class ConfigWindow : Window, IDisposable
 {
-    private Configuration Configuration;
 
     // We give this window a constant ID using ###
     // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
@@ -23,7 +22,6 @@ public class ConfigWindow : Window, IDisposable
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
-        Configuration = plugin.Configuration;
     }
 
     public void Dispose() { }
@@ -34,14 +32,14 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        var defaultMainTank = Configuration.DefaultMainTank;
+        var defaultMainTank = PrepullSystem.Configuration.DefaultMainTank;
         if (ImGui.Checkbox(strings.DefaultMainTank, ref defaultMainTank))
         {
-            Configuration.DefaultMainTank = defaultMainTank;
-            Configuration.Save();
+            PrepullSystem.Configuration.DefaultMainTank = defaultMainTank;
+            PrepullSystem.Configuration.Save();
         }
 
-        var gearRepairBreakpoint = Configuration.GearRepairBreakpoint / 300;
+        var gearRepairBreakpoint = PrepullSystem.Configuration.GearRepairBreakpoint / 300;
         ImGui.SetNextItemWidth(100f * ImGuiHelpers.GlobalScale);
         if (ImGui.InputInt(strings.GearRepairBreakpoint, ref gearRepairBreakpoint, 1))
         {
@@ -50,8 +48,8 @@ public class ConfigWindow : Window, IDisposable
             if (gearRepairBreakpoint > 99)
                 gearRepairBreakpoint = 99;
 
-            Configuration.GearRepairBreakpoint = gearRepairBreakpoint * 300;
-            Configuration.Save();
+            PrepullSystem.Configuration.GearRepairBreakpoint = gearRepairBreakpoint * 300;
+            PrepullSystem.Configuration.Save();
         }
     }
 }

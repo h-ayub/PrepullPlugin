@@ -30,6 +30,6 @@ public class Configuration : IPluginConfiguration
     // the below exist just to make saving less cumbersome
     public void Save()
     {
-        PrepullPlugin.PluginInterface.SavePluginConfig(this);
+        PrepullServices.PluginInterface.SavePluginConfig(this);
     }
 }

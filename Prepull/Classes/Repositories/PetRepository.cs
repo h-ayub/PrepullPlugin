@@ -19,7 +19,7 @@ namespace Prepull.Classes.Repositories
         {
             if (!Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
             {
-                value = new Configuration.TerritoryConfig(Configuration.DefaultMainTank, Configuration.FoodBuffRefreshTime);
+                value = new TerritoryConfig(Configuration.DefaultMainTank, Configuration.FoodBuffRefreshTime);
                 Configuration.TerritoryConditions[territoryId] = value;
             }
             return jobId switch

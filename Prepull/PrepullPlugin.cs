@@ -10,7 +10,6 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using KamiLib.Extensions;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using System.Runtime.Versioning;
 using Prepull.Commands;
 
@@ -19,78 +18,61 @@ namespace Prepull;
 [SupportedOSPlatform("windows")]
 public sealed class PrepullPlugin : IDalamudPlugin
 {
-    [PluginService] internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
-    [PluginService] internal static ITextureProvider TextureProvider { get; private set; } = null!;
-    [PluginService] internal static ICommandManager CommandManager { get; private set; } = null!;
-    [PluginService] internal static ICondition Condition { get; private set; } = null!;
-    [PluginService] internal static IClientState ClientState { get; private set; } = null!;
-    [PluginService] internal static IDataManager DataManager { get; private set; } = null!;
-    [PluginService] internal static IDutyState DutyState { get; private set; } = null!;
-    [PluginService] internal static IBuddyList BuddyList { get; private set; } = null!;
-    [PluginService] internal static IChatGui ChatGui { get; private set; } = null!;
-
     private const string OpenMainWindow = "/ppp";
     private const string OpenConfigWindow = "/ppc";
 
-    public Configuration Configuration { get; init; }
-
-    public readonly WindowSystem WindowSystem = new("Prepull");
-    private ConfigWindow ConfigWindow { get; init; }
-    private MainWindow MainWindow { get; init; }
-
-    internal Dictionary<uint, (string, DutyType)> TerritoryNames = [];
-
-    public PrepullPlugin()
+    public PrepullPlugin(IDalamudPluginInterface pluginInterface)
     {
-        Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+        pluginInterface.Create<PrepullServices>();
+        PrepullSystem.Configuration = PrepullServices.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
-        ConfigWindow = new ConfigWindow(this);
-        MainWindow = new MainWindow(this);
+        PrepullSystem.ConfigWindow = new ConfigWindow(this);
+        PrepullSystem.MainWindow = new MainWindow(this);
 
-        WindowSystem.AddWindow(ConfigWindow);
-        WindowSystem.AddWindow(MainWindow);
+        PrepullSystem.WindowSystem.AddWindow(PrepullSystem.ConfigWindow);
+        PrepullSystem.WindowSystem.AddWindow(PrepullSystem.MainWindow);
 
-        CommandManager.AddHandler(OpenMainWindow, new CommandInfo(OnMainUICommand)
+        PrepullServices.CommandManager.AddHandler(OpenMainWindow, new CommandInfo(OnMainUICommand)
         {
             HelpMessage = strings.HelpMessageMainWindow
         });
 
-        CommandManager.AddHandler(OpenConfigWindow, new CommandInfo(OnConfigUICommand)
+        PrepullServices.CommandManager.AddHandler(OpenConfigWindow, new CommandInfo(OnConfigUICommand)
         {
             HelpMessage = strings.HelpMessageConfigWindow
         });
 
-        PluginInterface.UiBuilder.Draw += DrawUI;
+        PrepullServices.PluginInterface.UiBuilder.Draw += DrawUI;
 
         // This adds a button to the plugin installer entry of this plugin which allows
         // to toggle the display status of the configuration ui
-        PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
+        PrepullServices.PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
 
         // Adds another button that is doing the same but for the main ui of the plugin
-        PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
+        PrepullServices.PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
 
         // This event is triggered when the player starts a duty
-        DutyState.DutyStarted += ActivatePrepull;
-        DutyState.DutyRecommenced += ActivatePrepull;
+        PrepullServices.DutyState.DutyStarted += ActivatePrepull;
+        PrepullServices.DutyState.DutyRecommenced += ActivatePrepull;
 
         // This fetches the territory names from excel sheet in dalamud repository
-        this.TerritoryNames = DataManager.GetExcelSheet<TerritoryType>().Where(x => x.PlaceName.ValueNullable?.Name.ToString().Length > 0)
+        PrepullSystem.TerritoryNames = PrepullServices.DataManager.GetExcelSheet<TerritoryType>().Where(x => x.PlaceName.ValueNullable?.Name.ToString().Length > 0)
             .ToDictionary(x => x.RowId,
                 x => ($"{x.PlaceName.ValueNullable?.Name} {(x.ContentFinderCondition.ValueNullable?.Name.ToString().Length > 0 ? $" ({x.ContentFinderCondition.ValueNullable?.Name})" : string.Empty)}",
-                        DataManager.GetDutyType(x.ContentFinderCondition.Value)));
+                        PrepullServices.DataManager.GetDutyType(x.ContentFinderCondition.Value)));
     }
 
     public void Dispose()
     {
-        WindowSystem.RemoveAllWindows();
+        PrepullSystem.WindowSystem.RemoveAllWindows();
 
-        ConfigWindow.Dispose();
-        MainWindow.Dispose();
+        PrepullSystem.ConfigWindow.Dispose();
+        PrepullSystem.MainWindow.Dispose();
 
-        DutyState.DutyStarted -= ActivatePrepull;
-        DutyState.DutyRecommenced -= ActivatePrepull;
+        PrepullServices.DutyState.DutyStarted -= ActivatePrepull;
+        PrepullServices.DutyState.DutyRecommenced -= ActivatePrepull;
 
-        CommandManager.RemoveHandler(OpenMainWindow);
+        PrepullServices.CommandManager.RemoveHandler(OpenMainWindow);
     }
 
     private void OnMainUICommand(string command, string args)
@@ -104,19 +86,19 @@ public sealed class PrepullPlugin : IDalamudPlugin
         ToggleConfigUI();
     }
 
-    private void DrawUI() => WindowSystem.Draw();
+    private void DrawUI() => PrepullSystem.WindowSystem.Draw();
 
-    public void ToggleConfigUI() => ConfigWindow.Toggle();
-    public void ToggleMainUI() => MainWindow.Toggle();
+    public void ToggleConfigUI() => PrepullSystem.ConfigWindow.Toggle();
+    public void ToggleMainUI() => PrepullSystem.MainWindow.Toggle();
 
     private unsafe void ActivatePrepull(object? sender, ushort e)
     {   
         var am = ActionManager.Instance();
         var playerStatePtr = PlayerState.Instance();
-        var territoryId = ClientState.TerritoryType;
+        var territoryId = PrepullServices.ClientState.TerritoryType;
         var jobId = playerStatePtr->CurrentClassJobId;
 
-        var executor = new CommandsExecutor(Configuration, TerritoryNames, ChatGui, ClientState, BuddyList);
+        var executor = new CommandsExecutor(PrepullSystem.Configuration, PrepullSystem.TerritoryNames, PrepullServices.ChatGui, PrepullServices.ClientState, PrepullServices.BuddyList);
         executor.ExecuteAllChecks(territoryId, jobId, am);
     }
 }

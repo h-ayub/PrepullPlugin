@@ -18,7 +18,7 @@ namespace Prepull.Classes.Repositories
         {
             if (!Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
             {
-                value = new Configuration.TerritoryConfig(Configuration.DefaultMainTank, Configuration.FoodBuffRefreshTime);
+                value = new TerritoryConfig(Configuration.DefaultMainTank, Configuration.FoodBuffRefreshTime);
                 Configuration.TerritoryConditions[territoryId] = value;
             }
             return jobId switch
@@ -39,7 +39,6 @@ namespace Prepull.Classes.Repositories
                 21 => 48,       // paladin
                 32 => 3629,     // dark knight
                 37 => 16142,    // gunbreaker
-                _ => throw new System.NotImplementedException()
             };
 
             if (am->GetActionStatus(ActionType.Action, actionId) == 0)
