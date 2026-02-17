@@ -1,30 +1,20 @@
-using Dalamud.IoC;
-using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.UI;
-using KamiLib.Extensions;
-using System;
-using System.Collections.Generic;
+using Prepull.Classes.Interfaces;
 using System.Linq;
 using System.Runtime.Versioning;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Prepull.Commands
+namespace Prepull.Classes.Repositories
 {
     [SupportedOSPlatform("windows")]
-
-    public class TankCommands : BaseCommands
+    public class TankService : BaseService, ITankService
     {
-        public TankCommands(Configuration configuration, Dictionary<uint, (string, DutyType)> territoryNames, IChatGui chatGui, IClientState clientState, IBuddyList buddyList) : base(configuration, territoryNames, chatGui, clientState, buddyList) 
-        {
-        }
+        public TankService() : base() { }
         private bool IsMainTank(byte jobId, ushort territoryId)
         {
-            if (!Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
+            if (!PrepullSystem.Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
             {
-                value = new Configuration.TerritoryConfig(Configuration.DefaultMainTank, Configuration.FoodBuffRefreshTime);
-                Configuration.TerritoryConditions[territoryId] = value;
+                value = new TerritoryConfig(PrepullSystem.Configuration.DefaultMainTank, PrepullSystem.Configuration.FoodBuffRefreshTime);
+                PrepullSystem.Configuration.TerritoryConditions[territoryId] = value;
             }
             return jobId switch
             {
@@ -44,7 +34,6 @@ namespace Prepull.Commands
                 21 => 48,       // paladin
                 32 => 3629,     // dark knight
                 37 => 16142,    // gunbreaker
-                _ => throw new System.NotImplementedException()
             };
 
             if (am->GetActionStatus(ActionType.Action, actionId) == 0)
@@ -53,7 +42,7 @@ namespace Prepull.Commands
             }
         }
 
-        public unsafe void ExecuteTankProtocol(byte jobId, ActionManager* am, ushort territoryId)
+        public unsafe void ExecuteTankCheck(byte jobId, ActionManager* am, ushort territoryId)
         {
             if (IsNormalContent(territoryId)) return;
 
@@ -66,10 +55,10 @@ namespace Prepull.Commands
                 _ => 0
             };
 
-            if (stanceId == 0 || ClientState.LocalPlayer == null)
+            if (stanceId == 0 || PrepullPluginServices.ClientState.LocalPlayer == null)
                 return;
 
-            var stanceActive = ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == stanceId);
+            var stanceActive = PrepullPluginServices.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == stanceId);
             var mainTankStanceIsOff = !stanceActive && IsMainTank(jobId, territoryId);
             var offTankStanceIsOn = stanceActive && !IsMainTank(jobId, territoryId);
 

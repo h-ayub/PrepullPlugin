@@ -11,17 +11,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="strings.Designer.cs">
+    <Compile Update="PrepullStrings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>strings.resx</DependentUpon>
+      <DependentUpon>PrepullStrings.resx</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="strings.resx">
+    <EmbeddedResource Update="PrepullStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>PrepullStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 
