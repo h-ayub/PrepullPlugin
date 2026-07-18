@@ -28,7 +28,7 @@ jobs:
         id: get_version
         shell: powershell
         run: |
-          [xml]$csproj = Get-Content (Get-ChildItem *.csproj | Select-Object -First 1)
+          [xml]$csproj = Get-Content (Get-ChildItem -Recurse *.csproj | Select-Object -First 1)
           $version = $csproj.Project.PropertyGroup.Version
           echo "VERSION=$version" >> $env:GITHUB_OUTPUT
 
