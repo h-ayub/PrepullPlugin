@@ -3,33 +3,31 @@ name: Automate Plugin Release
 on:
   push:
     branches:
+      - master
       - main
-  workflow_dispatch: # Adds a manual "Run workflow" button in GitHub Actions UI
-
-permissions:
-  contents: write
+  workflow_dispatch:
 
 jobs:
-  release:
+  build-and-release:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
 
-      - name: Get Version from CSPROJ
+      - name: Get Plugin Version
         id: get_version
         shell: powershell
         run: |
-          [xml]$csproj = Get-Content (Get-ChildItem -Recurse *.csproj | Select-Object -First 1)
-          $version = $csproj.Project.PropertyGroup.Version
+          # Find the csproj dynamically and extract the version string
+          $csproj = Get-ChildItem -Recurse -Filter "*.csproj" | Select-Object -First 1
+          [xml]$manifest = Get-Content $csproj.FullName
+          $version = $manifest.Project.PropertyGroup.Version
           echo "VERSION=$version" >> $env:GITHUB_OUTPUT
 
       - name: Check if Release Exists
@@ -37,44 +35,44 @@ jobs:
         shell: powershell
         run: |
           $tag = "v${{ steps.get_version.outputs.VERSION }}"
-          
           $releaseExists = gh release list --limit 100 | Select-String -Pattern $tag
-          
           if ($releaseExists) {
             echo "EXISTS=true" >> $env:GITHUB_OUTPUT
-            echo "Version $tag already released. Skipping deployment."
           } else {
             echo "EXISTS=false" >> $env:GITHUB_OUTPUT
-            echo "Version $tag not found. Proceeding with release build."
           }
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Package Plugin
+      - name: Mock Dalamud Environment
         if: steps.check_release.outputs.EXISTS == 'false'
-        run: dotnet build -c Release /p:ContinuousIntegrationServer=true
-
-      - name: Locate Artifacts
-        if: steps.check_release.outputs.EXISTS == 'false'
-        id: locate_zip
         shell: powershell
         run: |
-          $zipFile = Get-ChildItem -Path . -Filter *.zip -Recurse | Select-Object -First 1
+          # Force create a dummy empty directory so the local SDK check passes instantly
+          New-Item -ItemType Directory -Force -Path "$env:AppData\XIVLauncher\addon\Hooks\dev"
+
+      - name: Build Project
+        if: steps.check_release.outputs.EXISTS == 'false'
+        run: dotnet build -c Release
+
+      - name: Create and Upload GitHub Release
+        if: steps.check_release.outputs.EXISTS == 'false'
+        shell: powershell
+        run: |
+          $tag = "v${{ steps.get_version.outputs.VERSION }}"
+          
+          # DalamudPackager places the clean zip (latest.zip) inside your output bin folder
+          $zipFile = Get-ChildItem -Recurse -Filter "latest.zip" | Select-Object -First 1
+          
           if ($zipFile) {
-              echo "ZIP_PATH=$($zipFile.FullName)" >> $env:GITHUB_OUTPUT
-              echo "Found plugin zip at: $($zipFile.FullName)"
+              # Rename it to Prepull.zip for clarity if you prefer, or upload as latest.zip
+              Copy-Item $zipFile.FullName -Destination ".\Prepull.zip"
+              
+              # Draft and publish the GitHub release attaching the zip file
+              gh release create $tag ".\Prepull.zip" --title "Release $tag" --notes "Automated build for version $tag"
           } else {
-              echo "Error: Packed zip file not found!"
+              Write-Error "Could not find the packaged plugin zip file in the output directories."
               exit 1
           }
-
-      - name: Create GitHub Release
-        if: steps.check_release.outputs.EXISTS == 'false'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.get_version.outputs.VERSION }}
-          name: v${{ steps.get_version.outputs.VERSION }}
-          files: ${{ steps.locate_zip.outputs.ZIP_PATH }}
-          generate_release_notes: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
