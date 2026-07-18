@@ -3,7 +3,6 @@
         "Author": "Oppressed Gamer-",
         "Name": "Prepull",
         "InternalName": "Prepull",
-        "AssemblyVersion": "1.1.1.7", // Update this
         "Punchline": "Prepull, a plugin to automate various prepull things in raid like tank stance, fairy, food buffs, and repairing",
         "Description": "/ppp to open up configuration window for setting up prepull parameters\n/ppc to open up a configuration window for setting up default behaviors",
         "RepoUrl": "https://github.com/h-ayub/PrepullPlugin",
@@ -13,9 +12,9 @@
         ],
         "DalamudApiLevel": 15,
         "LoadPriority": 0,
-        "DownloadLinkInstall": "https://github.com/h-ayub/PrepullPlugin/releases/download/v1.1.1.7/Prepull.zip", //Update these
-        "DownloadLinkTesting": "https://github.com/h-ayub/PrepullPlugin/releases/download/v1.1.1.7/Prepull.zip",
-        "DownloadLinkUpdate": "https://github.com/h-ayub/PrepullPlugin/releases/download/v1.1.1.7/Prepull.zip",
+        "DownloadLinkInstall": "https://github.com/h-ayub/PrepullPlugin/releases/latest/download/Prepull.zip",
+        "DownloadLinkTesting": "https://github.com/h-ayub/PrepullPlugin/releases/latest/download/Prepull.zip",
+        "DownloadLinkUpdate": "https://github.com/h-ayub/PrepullPlugin/releases/latest/download/Prepull.zip",
         "_isDip17Plugin": true,
         "_Dip17Channel": "stable"
     }
