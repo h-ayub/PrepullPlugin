@@ -52,7 +52,7 @@ jobs:
 
       - name: Build and Package Plugin
         if: steps.check_release.outputs.EXISTS == 'false'
-        run: dotnet build -c Release
+        run: dotnet build -c Release /p:DownloadDalamud=true /p:DalamudLibPath="D:\a\dalamud-dist\"
 
       - name: Locate Artifacts
         if: steps.check_release.outputs.EXISTS == 'false'
