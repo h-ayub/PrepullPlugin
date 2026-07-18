@@ -2,7 +2,7 @@
     "Author": "Oppressed Gamer-",
     "Name": "Prepull",
     "InternalName": "Prepull",
-    "AssemblyVersion": "$VERSION",
+    "AssemblyVersion": "$version$", // Update this version number when you make changes to the plugin
     "Punchline": "Prepull, a plugin to automate various prepull things in raid like tank stance, fairy, food buffs, and repairing",
     "Description": "/ppp to open up configuration window for setting up prepull parameters\n/ppc to open up a configuration window for setting up default behaviors",
     "RepoUrl": "https://github.com/h-ayub/PrepullPlugin",
