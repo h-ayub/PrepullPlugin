@@ -1,10 +1,13 @@
 using FFXIVClientStructs.FFXIV.Client.Game;
+using Prepull.Classes.Interfaces;
 using System;
+using System.Runtime.Versioning;
 
 // Credit to RepairMe plugin
 namespace Prepull.Classes.Helpers
 {
-    public unsafe class EquipmentScanner
+    [SupportedOSPlatform("windows")]
+    public unsafe class EquipmentScanner : IEquipmentScanner
     {
         internal const uint EquipmentContainerSize = 13;
 
@@ -26,8 +29,9 @@ namespace Prepull.Classes.Helpers
             equipmentInventoryItem = equipmentContainer->GetInventorySlot(0);
         }
 
-        public bool GearNeedsRepairing(int gearRepairBreakpoint)
+        public bool GearNeedsRepairing()
         {
+            var gearRepairBreakpoint = PrepullSystem.Configuration.GearRepairBreakpoint;
             var inventoryItem = equipmentInventoryItem;
             if (inventoryItem == null) return false;
 

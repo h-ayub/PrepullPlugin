@@ -3,7 +3,7 @@ using Prepull.Classes.Interfaces;
 using System.Linq;
 using System.Runtime.Versioning;
 
-namespace Prepull.Classes.Repositories
+namespace Prepull.Classes.Services
 {
     [SupportedOSPlatform("windows")]
     public class TankService : BaseService, ITankService
@@ -34,6 +34,7 @@ namespace Prepull.Classes.Repositories
                 21 => 48,       // paladin
                 32 => 3629,     // dark knight
                 37 => 16142,    // gunbreaker
+                _ => throw new System.NotImplementedException(),
             };
 
             if (am->GetActionStatus(ActionType.Action, actionId) == 0)
@@ -52,10 +53,10 @@ namespace Prepull.Classes.Repositories
                 21 => 91,   // paladin
                 32 => 743,  // dark knight
                 37 => 1833, // gunbreaker
-                _ => 0
+                _ => throw new System.NotImplementedException(),
             };
 
-            if (stanceId == 0 || PrepullPluginServices.ObjectTable.LocalPlayer == null)
+            if (PrepullPluginServices.ObjectTable.LocalPlayer == null)
                 return;
 
             var stanceActive = PrepullPluginServices.ObjectTable.LocalPlayer.StatusList.Any(x => x.StatusId == stanceId);

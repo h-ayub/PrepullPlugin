@@ -4,8 +4,14 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using KamiLib.Extensions;
 using Lumina.Excel.Sheets;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Prepull.Classes.Executors;
+using Prepull.Classes.Helpers;
+using Prepull.Classes.Interfaces;
+using Prepull.Classes.Services;
 using Prepull.Windows;
+using System;
 using System.Linq;
 using System.Runtime.Versioning;
 
@@ -20,10 +26,22 @@ public sealed class PrepullPlugin : IDalamudPlugin
     public static MainWindow MainWindow { get; set; }
     private readonly static WindowSystem WindowSystem = new("Prepull");
     public string Name => "Prepull";
+    private readonly IServiceProvider serviceProvider;
 
     public PrepullPlugin(IDalamudPluginInterface pluginInterface)
     {
+        // Set up services and dependency injection
         pluginInterface.Create<PrepullPluginServices>();
+        var services = new ServiceCollection();
+        services.AddLogging();
+
+        services.AddTransient<IGearAndFoodService, GearAndFoodService>();
+        services.AddTransient<IPetService, PetService>();
+        services.AddTransient<ITankService, TankService>();
+        services.AddTransient<IEquipmentScanner, EquipmentScanner>();
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(PrepullPlugin).Assembly));
+        serviceProvider = services.BuildServiceProvider();
+
         PrepullSystem.Configuration = PrepullPluginServices.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
         ConfigWindow = new ConfigWindow(this);
@@ -93,7 +111,7 @@ public sealed class PrepullPlugin : IDalamudPlugin
 
     private void ActivatePrepull(IDutyStateEventArgs args)
     {   
-        var executor = new PrepullExecutor();
-        executor.ExecuteAllChecks();
+        var mediator = serviceProvider.GetRequiredService<IMediator>();
+        mediator.Send(new PrepullExecutor());
     }
 }

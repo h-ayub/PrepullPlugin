@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Dalamud.NET.Sdk/15.0.0"> <!-- Update this for big patches -->
     <PropertyGroup>
-        <Version>1.1.1.8</Version> <!-- Update this -->
+        <Version>1.1.1.9</Version> <!-- Update this -->
         <Description>Prepull, a plugin to automate various prepull things in raid like tank stance, fairy, food buffs, and repairing</Description>
         <PackageProjectUrl>https://github.com/h-ayub/PrepullPlugin</PackageProjectUrl>
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
@@ -16,6 +16,11 @@
     <ItemGroup>
       <Compile Remove=".github\**" />
       <EmbeddedResource Remove=".github\**" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="MediatR" Version="14.2.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.10" />
     </ItemGroup>
 
   <ItemGroup>

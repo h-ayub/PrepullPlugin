@@ -2,7 +2,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using Prepull.Classes.Interfaces;
 using System.Runtime.Versioning;
 
-namespace Prepull.Classes.Repositories
+namespace Prepull.Classes.Services
 {
     [SupportedOSPlatform("windows")]
     public class PetService : BaseService, IPetService
