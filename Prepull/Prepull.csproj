@@ -13,6 +13,9 @@
         <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
+    <ItemGroup>
+      <Content Include=".github\workflows\release.yml" />
+    </ItemGroup>
 
   <ItemGroup>
     <Compile Update="PrepullStrings.Designer.cs">
