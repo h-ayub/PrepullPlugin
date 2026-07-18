@@ -23,7 +23,7 @@ namespace Prepull.Classes.Executors
         {
             var am = ActionManager.Instance();
             var playerStatePtr = PlayerState.Instance();
-            var territoryId = PrepullPluginServices.ClientState.TerritoryType;
+            ushort territoryId = (ushort)PrepullPluginServices.ClientState.TerritoryType;
             var jobId = playerStatePtr->CurrentClassJobId;
             gearAndFoodRepository.ExecuteGearAndFoodCheck(territoryId);
             petRepository.ExecutePetCheck(jobId, am, territoryId);

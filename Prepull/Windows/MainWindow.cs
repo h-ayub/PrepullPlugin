@@ -12,8 +12,8 @@ namespace Prepull.Windows;
 [SupportedOSPlatform("windows")]
 public class MainWindow : Window, IDisposable
 {
-    private PrepullPlugin Plugin;
-    private unsafe PlayerState* playerStatePtr = PlayerState.Instance();
+    private readonly PrepullPlugin Plugin;
+    private readonly unsafe PlayerState* PlayerStatePtr = PlayerState.Instance();
 
     public MainWindow(PrepullPlugin plugin)
         : base(PrepullStrings.MainWindowTitle, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -38,14 +38,14 @@ public class MainWindow : Window, IDisposable
             return;
         }
 
-        var territoryId = PrepullPluginServices.ClientState.TerritoryType;   // get territory id
+        ushort territoryId = (ushort)PrepullPluginServices.ClientState.TerritoryType;   // get territory id
         
         if (!PrepullSystem.Configuration.TerritoryConditions.ContainsKey(territoryId)) // check if we do not have data on this territory
         {
             PrepullSystem.Configuration.TerritoryConditions[territoryId] = new TerritoryConfig(PrepullSystem.Configuration.DefaultMainTank, PrepullSystem.Configuration.FoodBuffRefreshTime);
         }
 
-        var jobId = playerStatePtr->CurrentClassJobId;
+        var jobId = PlayerStatePtr->CurrentClassJobId;
         ImGui.Text(ReturnTerritoryName(territoryId));
         ImGui.Spacing();
 

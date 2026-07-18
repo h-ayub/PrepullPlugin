@@ -1,4 +1,5 @@
 using Dalamud.Game.Command;
+using Dalamud.Game.DutyState;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using KamiLib.Extensions;
@@ -18,6 +19,7 @@ public sealed class PrepullPlugin : IDalamudPlugin
     public static ConfigWindow ConfigWindow { get; set; }
     public static MainWindow MainWindow { get; set; }
     private readonly static WindowSystem WindowSystem = new("Prepull");
+    public string Name => "Prepull";
 
     public PrepullPlugin(IDalamudPluginInterface pluginInterface)
     {
@@ -89,7 +91,7 @@ public sealed class PrepullPlugin : IDalamudPlugin
     public void ToggleConfigUI() => ConfigWindow.Toggle();
     public void ToggleMainUI() => MainWindow.Toggle();
 
-    private void ActivatePrepull(object? sender, ushort e)
+    private void ActivatePrepull(IDutyStateEventArgs args)
     {   
         var executor = new PrepullExecutor();
         executor.ExecuteAllChecks();

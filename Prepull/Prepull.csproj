@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Dalamud.NET.Sdk/14.0.2">
-
-  <PropertyGroup>
-    <Version>1.0.8</Version>
-    <Description>Prepull, a plugin to automate various prepull things in raid like tank stance, fairy, food buffs, and repairing</Description>
-    <PackageProjectUrl>https://github.com/h-ayub/PrepullPlugin</PackageProjectUrl>
-    <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
-    <IsPackable>false</IsPackable>
-    <TargetFramework>net10.0</TargetFramework>
-  </PropertyGroup>
+<Project Sdk="Dalamud.NET.Sdk/15.0.0">
+    <PropertyGroup>
+        <Version>1.1.1.0</Version>
+        <Description>Prepull, a plugin to automate various prepull things in raid like tank stance, fairy, food buffs, and repairing</Description>
+        <PackageProjectUrl>https://github.com/h-ayub/PrepullPlugin</PackageProjectUrl>
+        <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
+        <IsPackable>false</IsPackable>
+        <TargetFramework>net10.0</TargetFramework>
+        <Platforms>x64</Platforms>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    </PropertyGroup>
 
   <ItemGroup>
     <Compile Update="PrepullStrings.Designer.cs">
@@ -26,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="DalamudPackager" Version="14.0.2" />
-    <PackageReference Update="DotNet.ReproducibleBuilds" Version="2.0.2" />
+    <PackageReference Update="DalamudPackager" Version="15.0.0" />
+    <PackageReference Update="DotNet.ReproducibleBuilds" Version="2.0.5" />
   </ItemGroup>
 </Project>
