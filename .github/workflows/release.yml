@@ -48,8 +48,15 @@ jobs:
         if: steps.check_release.outputs.EXISTS == 'false'
         shell: powershell
         run: |
-          # Force create a dummy empty directory so the local SDK check passes instantly
-          New-Item -ItemType Directory -Force -Path "$env:AppData\XIVLauncher\addon\Hooks\dev"
+          # 1. Create the exact path the SDK is looking for
+          $targetDir = "$env:AppData\XIVLauncher\addon\Hooks\dev"
+          New-Item -ItemType Directory -Force -Path $targetDir
+          
+          # 2. Download the official Dalamud release binaries
+          Invoke-WebRequest -Uri "https://goatcorp.github.io/dalamud-distrib/latest.zip" -OutFile "dalamud.zip"
+          
+          # 3. Unpack the assemblies directly into the target dev folder
+          Expand-Archive -Force -Path "dalamud.zip" -DestinationPath $targetDir
 
       - name: Build Project
         if: steps.check_release.outputs.EXISTS == 'false'
