@@ -37,12 +37,15 @@ jobs:
         shell: powershell
         run: |
           $tag = "v${{ steps.get_version.outputs.VERSION }}"
-          $exists = gh release view $tag 2>&1
-          if ($exists -match "release not found") {
-            echo "EXISTS=false" >> $env:GITHUB_OUTPUT
-          } else {
+          
+          $releaseExists = gh release list --limit 100 | Select-String -Pattern $tag
+          
+          if ($releaseExists) {
             echo "EXISTS=true" >> $env:GITHUB_OUTPUT
             echo "Version $tag already released. Skipping deployment."
+          } else {
+            echo "EXISTS=false" >> $env:GITHUB_OUTPUT
+            echo "Version $tag not found. Proceeding with release build."
           }
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
