@@ -1,33 +1,45 @@
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using Prepull.Classes.Repositories;
+using MediatR;
+using Prepull.Classes.Interfaces;
+using Prepull.Classes.Services;
 using System.Runtime.Versioning;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Prepull.Classes.Executors
 {
-    [SupportedOSPlatform("windows")]
-    public class PrepullExecutor
+    public class PrepullExecutor : IRequest
     {
-        private readonly GearAndFoodService gearAndFoodRepository;
-        private readonly PetService petRepository;
-        private readonly TankService tankRepository;
+    }
 
-        public PrepullExecutor()
+    [SupportedOSPlatform("windows")]
+    public class PrepullExecutorHandler : IRequestHandler<PrepullExecutor>
+    {
+        private readonly IGearAndFoodService gearAndFoodService;
+        private readonly IPetService petService;
+        private readonly ITankService tankService;
+
+        public PrepullExecutorHandler(IGearAndFoodService gearAndFoodService, IPetService petService, ITankService tankService) 
         {
-            this.gearAndFoodRepository = new GearAndFoodService();
-            this.petRepository = new PetService();
-            this.tankRepository = new TankService();
+            this.gearAndFoodService = gearAndFoodService;
+            this.petService = petService;
+            this.tankService = tankService;
         }
 
-        public unsafe void ExecuteAllChecks()
+
+        public unsafe Task Handle(PrepullExecutor request, CancellationToken cancellationToken)
         {
             var am = ActionManager.Instance();
             var playerStatePtr = PlayerState.Instance();
-            ushort territoryId = (ushort)PrepullPluginServices.ClientState.TerritoryType;
+            var territoryId = (ushort)PrepullPluginServices.ClientState.TerritoryType;
             var jobId = playerStatePtr->CurrentClassJobId;
-            gearAndFoodRepository.ExecuteGearAndFoodCheck(territoryId);
-            petRepository.ExecutePetCheck(jobId, am, territoryId);
-            tankRepository.ExecuteTankCheck(jobId, am, territoryId);
+
+            gearAndFoodService.ExecuteGearAndFoodCheck(territoryId);
+            petService.ExecutePetCheck(jobId, am, territoryId);
+            tankService.ExecuteTankCheck(jobId, am, territoryId);
+
+            return Task.CompletedTask;
         }
     }
 }
