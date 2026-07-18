@@ -1,3 +1,4 @@
+using Dalamud.Game.DutyState;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
@@ -16,4 +17,6 @@ internal class PrepullPluginServices
     [PluginService] public static IDutyState DutyState { get; set; }
     [PluginService] public static IBuddyList BuddyList { get; set; }
     [PluginService] public static IChatGui ChatGui { get; set; }
+    [PluginService] public static IPlayerState PlayerState { get; set; }
+    [PluginService] public static IObjectTable ObjectTable { get; set; }
 }

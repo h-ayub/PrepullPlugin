@@ -12,11 +12,11 @@ namespace Prepull.Classes.Repositories
         public GearAndFoodService() : base() { }
         private void CheckRemainingFoodBuff(ushort territoryId)
         {
-            if (PrepullPluginServices.ClientState.LocalPlayer == null) return;
+            if (PrepullPluginServices.ObjectTable.LocalPlayer == null) return;
             if (IsNormalContent(territoryId) || IsNormalDungeon(territoryId)) return;
 
-            var food = PrepullPluginServices.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == 48);
-            var timeRemaining = PrepullPluginServices.ClientState.LocalPlayer.StatusList.FirstOrDefault(x => x.StatusId == 48)?.RemainingTime;
+            var food = PrepullPluginServices.ObjectTable.LocalPlayer.StatusList.Any(x => x.StatusId == 48);
+            var timeRemaining = PrepullPluginServices.ObjectTable.LocalPlayer.StatusList.FirstOrDefault(x => x.StatusId == 48)?.RemainingTime;
             var refreshTime = PrepullSystem.Configuration.TerritoryConditions.TryGetValue(territoryId, out var value) ? value.FoodBuffRefreshTime : PrepullSystem.Configuration.FoodBuffRefreshTime;
 
             if (!food || timeRemaining < refreshTime)
@@ -28,7 +28,7 @@ namespace Prepull.Classes.Repositories
 
         private void CheckGear(ushort territoryId)
         {
-            if (PrepullPluginServices.ClientState.LocalPlayer == null) return;
+            if (PrepullPluginServices.ObjectTable.LocalPlayer == null) return;
             if (IsNormalContent(territoryId) || IsNormalDungeon(territoryId)) return;
 
             var equipmentScanner = new EquipmentScanner();

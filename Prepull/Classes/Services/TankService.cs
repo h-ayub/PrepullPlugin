@@ -55,10 +55,10 @@ namespace Prepull.Classes.Repositories
                 _ => 0
             };
 
-            if (stanceId == 0 || PrepullPluginServices.ClientState.LocalPlayer == null)
+            if (stanceId == 0 || PrepullPluginServices.ObjectTable.LocalPlayer == null)
                 return;
 
-            var stanceActive = PrepullPluginServices.ClientState.LocalPlayer.StatusList.Any(x => x.StatusId == stanceId);
+            var stanceActive = PrepullPluginServices.ObjectTable.LocalPlayer.StatusList.Any(x => x.StatusId == stanceId);
             var mainTankStanceIsOff = !stanceActive && IsMainTank(jobId, territoryId);
             var offTankStanceIsOn = stanceActive && !IsMainTank(jobId, territoryId);
 
