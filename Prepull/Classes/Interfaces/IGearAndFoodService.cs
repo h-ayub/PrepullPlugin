@@ -1,6 +1,6 @@
 namespace Prepull.Classes.Interfaces
 {
-    public interface IGearAndFoodService : IBaseService
+    public interface IGearAndFoodService
     {
         public void ExecuteGearAndFoodCheck(ushort territoryId);
     }
