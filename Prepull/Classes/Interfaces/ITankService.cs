@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Prepull.Classes.Interfaces
 {
-    public interface ITankService : IBaseService
+    public interface ITankService
     {
         public unsafe void ExecuteTankCheck(byte jobId, FFXIVClientStructs.FFXIV.Client.Game.ActionManager* am, ushort territoryId);
     }
