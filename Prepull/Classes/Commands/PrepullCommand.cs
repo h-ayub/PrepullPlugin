@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace Prepull.Classes.Executors
 {
-    public class PrepullExecutor : IRequest
+    public class PrepullCommand : IRequest
     {
     }
 
     [SupportedOSPlatform("windows")]
-    public class PrepullExecutorHandler : IRequestHandler<PrepullExecutor>
+    public class PrepullCommandHandler : IRequestHandler<PrepullCommand>
     {
         private readonly IGearAndFoodService gearAndFoodService;
         private readonly IPetService petService;
         private readonly ITankService tankService;
 
-        public PrepullExecutorHandler(IGearAndFoodService gearAndFoodService, IPetService petService, ITankService tankService) 
+        public PrepullCommandHandler(IGearAndFoodService gearAndFoodService, IPetService petService, ITankService tankService) 
         {
             this.gearAndFoodService = gearAndFoodService;
             this.petService = petService;
@@ -28,7 +28,7 @@ namespace Prepull.Classes.Executors
         }
 
 
-        public unsafe Task Handle(PrepullExecutor request, CancellationToken cancellationToken)
+        public unsafe Task Handle(PrepullCommand request, CancellationToken cancellationToken)
         {
             var am = ActionManager.Instance();
             var playerStatePtr = PlayerState.Instance();

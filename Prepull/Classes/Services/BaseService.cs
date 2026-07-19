@@ -12,6 +12,17 @@ namespace Prepull.Classes.Services
         { 
         }
 
+        protected TerritoryConfig GetTerritoryConfig(ushort territoryId)
+        {
+            if (!PrepullSystem.Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
+            {
+                value = new TerritoryConfig(PrepullSystem.Configuration.DefaultMainTank, PrepullSystem.Configuration.FoodBuffRefreshTime);
+                PrepullSystem.Configuration.TerritoryConditions[territoryId] = value;
+            }
+
+            return value;
+        }
+
         protected bool IsNormalDungeon(ushort territoryId)
         {
             var type = PrepullSystem.TerritoryNames[territoryId].Item2;
