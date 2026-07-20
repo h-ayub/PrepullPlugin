@@ -1,11 +1,12 @@
-using System;
+using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.Interop;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Prepull.Classes.Interfaces
 {
     public interface IDancePartnerService
     {
-        public void ExecuteDancePartnerCheck(byte jobId, ushort territoryId);
+        public unsafe void ExecuteDancePartnerCheck(byte jobId, ActionManager* am, ushort territoryId);
     }
 }

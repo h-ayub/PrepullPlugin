@@ -6,6 +6,8 @@ using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Dalamud.Bindings.ImGui;
 using System.Runtime.Versioning;
+using Prepull.Classes.Enums;
+using Prepull.Classes.Services;
 
 namespace Prepull.Windows;
 
@@ -14,6 +16,7 @@ public class MainWindow : Window, IDisposable
 {
     private readonly PrepullPlugin Plugin;
     private readonly unsafe PlayerState* PlayerStatePtr = PlayerState.Instance();
+    private readonly BaseService baseService = new BaseService();
 
     public MainWindow(PrepullPlugin plugin)
         : base(PrepullStrings.MainWindowTitle, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -39,77 +42,108 @@ public class MainWindow : Window, IDisposable
         }
 
         ushort territoryId = (ushort)PrepullPluginServices.ClientState.TerritoryType;   // get territory id
+
+        // who cares if this is normal content...
+        if (baseService.IsNormalContent(territoryId))
+            return;
         
         if (!PrepullSystem.Configuration.TerritoryConditions.ContainsKey(territoryId)) // check if we do not have data on this territory
         {
             PrepullSystem.Configuration.TerritoryConditions[territoryId] = new TerritoryConfig(PrepullSystem.Configuration.DefaultMainTank, PrepullSystem.Configuration.FoodBuffRefreshTime);
         }
 
-        var jobId = PlayerStatePtr->CurrentClassJobId;
+        var jobId = (FfxivJob)PlayerStatePtr->CurrentClassJobId;
         ImGui.Text(ReturnTerritoryName(territoryId));
         ImGui.Spacing();
 
-        if (jobId == 19 || jobId == 21 || jobId == 32 || jobId == 37)   // tanks: warrior, paladin, dark knight, gunbreaker
+        if (jobId == FfxivJob.Paladin || jobId == FfxivJob.Warrior || jobId == FfxivJob.DarkKnight || jobId == FfxivJob.Gunbreaker)   // tanks: warrior, paladin, dark knight, gunbreaker
         {
-            var config = PrepullSystem.Configuration.TerritoryConditions[territoryId];
-            var isMainTank = jobId switch
-            {
-                19 => config.IsWarMainTank,
-                21 => config.IsPldMainTank,
-                32 => config.IsDrkMainTank,
-                37 => config.IsGnbMainTank,
-            };
-            if (ImGui.Checkbox(PrepullStrings.ToggleMainTank, ref isMainTank))
-            {
-                switch (jobId)
-                {
-                    case 19:
-                        config.IsWarMainTank = isMainTank;
-                        break;
-                    case 21:
-                        config.IsPldMainTank = isMainTank;
-                        break;
-                    case 32:
-                        config.IsDrkMainTank = isMainTank;
-                        break;
-                    case 37:
-                        config.IsGnbMainTank = isMainTank;
-                        break;
-                }
-                PrepullSystem.Configuration.Save();
-            }
-        } else if (jobId == 28 || jobId == 27)  // scholar, summoner
+            DrawTankUi(jobId, territoryId);
+        } else if (jobId == FfxivJob.Scholar || jobId == FfxivJob.Summoner)  // scholar, summoner
         {
-            var config = PrepullSystem.Configuration.TerritoryConditions[territoryId];
-            var summonPet = jobId switch {
-                27 => config.IsSchSummonPet,
-                28 => config.IsSmnSummonPet
-            };
-            if (ImGui.Checkbox(PrepullStrings.SummonPet, ref summonPet))
-            {
-                switch (jobId)
-                {
-                    case 27:
-                        config.IsSchSummonPet = summonPet;
-                        break;
-                    case 28:
-                        config.IsSmnSummonPet = summonPet;
-                        break;
-                }
-                PrepullSystem.Configuration.Save();
-            }
+            DrawPetSummonUi(jobId, territoryId);
         }
 
-        var foodRefreshTime = PrepullSystem.Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime/60;
+        DrawFoodBuffRefreshTimeUi(territoryId);
+        DrawDesignatedDancePartnerUi(territoryId);
+    }
+
+    private void DrawTankUi(FfxivJob jobId, ushort territoryId)
+    {
+        var config = PrepullSystem.Configuration.TerritoryConditions[territoryId];
+        var isMainTank = jobId switch
+        {
+            FfxivJob.Paladin => config.IsPldMainTank,
+            FfxivJob.Warrior => config.IsWarMainTank,
+            FfxivJob.DarkKnight => config.IsDrkMainTank,
+            FfxivJob.Gunbreaker => config.IsGnbMainTank,
+        };
+        if (ImGui.Checkbox(PrepullStrings.ToggleMainTank, ref isMainTank))
+        {
+            switch (jobId)
+            {
+                case FfxivJob.Warrior:
+                    config.IsWarMainTank = isMainTank;
+                    break;
+                case FfxivJob.Paladin:
+                    config.IsPldMainTank = isMainTank;
+                    break;
+                case FfxivJob.DarkKnight:
+                    config.IsDrkMainTank = isMainTank;
+                    break;
+                case FfxivJob.Gunbreaker:
+                    config.IsGnbMainTank = isMainTank;
+                    break;
+            }
+            PrepullSystem.Configuration.Save();
+        }
+    }
+
+    private void DrawPetSummonUi(FfxivJob jobId, ushort territoryId)
+    {
+        var config = PrepullSystem.Configuration.TerritoryConditions[territoryId];
+        var summonPet = jobId switch
+        {
+            FfxivJob.Scholar => config.IsSchSummonPet,
+            FfxivJob.Summoner => config.IsSmnSummonPet
+        };
+        if (ImGui.Checkbox(PrepullStrings.SummonPet, ref summonPet))
+        {
+            switch (jobId)
+            {
+                case FfxivJob.Scholar:
+                    config.IsSchSummonPet = summonPet;
+                    break;
+                case FfxivJob.Summoner:
+                    config.IsSmnSummonPet = summonPet;
+                    break;
+            }
+            PrepullSystem.Configuration.Save();
+        }
+    }
+
+    private void DrawFoodBuffRefreshTimeUi(ushort territoryId)
+    {
+        var foodRefreshTime = PrepullSystem.Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime / 60;
         ImGui.SetNextItemWidth(100f * ImGuiHelpers.GlobalScale);
         if (ImGui.InputInt(PrepullStrings.RefreshFoodTimer, ref foodRefreshTime, 1))
         {
-            if (foodRefreshTime < 1) 
+            if (foodRefreshTime < 1)
                 foodRefreshTime = 1;
             if (foodRefreshTime > 20)
                 foodRefreshTime = 20;
+            PrepullSystem.Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime = foodRefreshTime * 60;
+            PrepullSystem.Configuration.Save();
+        }
+    }
 
-            PrepullSystem.Configuration.TerritoryConditions[territoryId].FoodBuffRefreshTime = foodRefreshTime*60;
+    private void DrawDesignatedDancePartnerUi(ushort territoryId)
+    {
+        var designatedDancePartner = PrepullSystem.Configuration.TerritoryConditions[territoryId].DesignatedDancePartner;
+        ImGui.SetNextItemWidth(200f * ImGuiHelpers.GlobalScale);
+        if (ImGui.InputText(PrepullStrings.DancePartner, ref designatedDancePartner, 50))
+        {
+            PrepullSystem.Configuration.TerritoryConditions[territoryId].DesignatedDancePartner = designatedDancePartner;
             PrepullSystem.Configuration.Save();
         }
     }

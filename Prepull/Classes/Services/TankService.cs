@@ -35,7 +35,7 @@ namespace Prepull.Classes.Services
 
         public unsafe void ExecuteTankCheck(byte jobId, ActionManager* am, ushort territoryId)
         {
-            if (IsNormalContent(territoryId)) return;
+            if (IsOtherNormalContent(territoryId)) return;
 
             var actionId = actionExecutor.GetActionIdForJob(jobId);
 

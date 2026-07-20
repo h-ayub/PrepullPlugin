@@ -40,6 +40,9 @@ public sealed class PrepullPlugin : IDalamudPlugin
         services.AddTransient<ITankService, TankService>();
         services.AddTransient<IEquipmentScanner, EquipmentScanner>();
         services.AddTransient<IActionExecutor, ActionExecutor>();
+        services.AddTransient<IStatusListScanner, StatusListScanner>();
+        services.AddTransient<IDancePartnerService, DancePartnerService>();
+        services.AddTransient<IPartyListGenerator, PartyListGenerator>();
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(PrepullPlugin).Assembly));
         serviceProvider = services.BuildServiceProvider();
 

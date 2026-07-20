@@ -9,6 +9,10 @@ namespace Prepull.Classes.Helpers
 {
     public class ActionExecutor : IActionExecutor
     {
+        public ActionExecutor()
+        {
+        }
+
         public uint GetActionIdForJob(byte jobId)
         {
             return (FfxivJob)jobId switch
@@ -23,18 +27,18 @@ namespace Prepull.Classes.Helpers
                 _ => throw new System.NotImplementedException(),
             };
         }
-        public unsafe void ExecuteActionByActionId(uint actionId, ActionManager* am)
+        public unsafe void ExecuteActionByActionId(uint actionId, ActionManager* am, ulong targetId=3758096384uL)
         {
             if (am->GetActionStatus(ActionType.Action, actionId) == 0)
             {
-                am->UseAction(ActionType.Action, actionId);
+                am->UseAction(ActionType.Action, actionId, targetId);
             }
         }
 
-        public unsafe void ExecuteActionByJobId(byte jobId, ActionManager* am)
+        public unsafe void ExecuteActionByJobId(byte jobId, ActionManager* am, ulong targetId=3758096384uL)
         {
             var actionId = GetActionIdForJob(jobId);
-            ExecuteActionByActionId(actionId, am);
+            ExecuteActionByActionId(actionId, am, targetId);
         }
     }
 }

@@ -165,4 +165,13 @@
   <data name="RepairGear" xml:space="preserve">
     <value>Repair gear!</value>
   </data>
+  <data name="DancePartnerUnassigned" xml:space="preserve">
+    <value>Dance partner is not assigned!</value>
+  </data>
+  <data name="DesignatedDancePartnerUnassigned" xml:space="preserve">
+    <value>{0} does not have dance partner!</value>
+  </data>
+  <data name="DancePartner" xml:space="preserve">
+    <value>Dance partner</value>
+  </data>
 </root>
