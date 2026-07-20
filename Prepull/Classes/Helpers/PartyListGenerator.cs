@@ -27,9 +27,9 @@ namespace Prepull.Classes.Helpers
                     if (chara == null) continue;
 
                     // Un-comment filters as needed:
-                    //if (chara->Character.GameObject.ObjectKind is not ObjectKind.Pc) continue;
+                    if (chara->Character.GameObject.ObjectKind is not ObjectKind.Pc) continue;
                     if (!chara->GetIsTargetable()) continue;
-                    //if (!chara->IsPartyMember || chara->NameString != PrepullPluginServices.ObjectTable.LocalPlayer?.Name.TextValue) continue;
+                    if (!chara->IsPartyMember || chara->NameString != PrepullPluginServices.ObjectTable.LocalPlayer?.Name.TextValue) continue;
 
                     // Convert the unmanaged pointer address into a Dalamud IBattleChara interface
                     var managedChara = PrepullPluginServices.ObjectTable.CreateObjectReference((nint)chara) as IBattleChara;
