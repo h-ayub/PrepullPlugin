@@ -44,7 +44,7 @@ namespace Prepull.Classes.Services
             foreach (var partyMember in partyList)
             {
                 var partyMemberJobId = (byte)partyMember.ClassJob.RowId;
-                if (IsPlayerDancer(partyMemberJobId))
+                if (IsPlayerDancer(partyMemberJobId) && partyMember.Level >= 60)
                 {
                     dancers.Add(partyMember);
                 }
