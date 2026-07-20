@@ -88,7 +88,7 @@ namespace Prepull {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dance partner is not assigned!.
+        ///   Looks up a localized string similar to {0} has not given dance partner to anyone!.
         /// </summary>
         internal static string DancePartnerUnassigned {
             get {

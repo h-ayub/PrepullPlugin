@@ -5,6 +5,7 @@ using Prepull.Classes.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Runtime.Versioning;
 
 namespace Prepull.Classes.Services
@@ -15,10 +16,20 @@ namespace Prepull.Classes.Services
     {
         private readonly IActionExecutor actionExecutor;
         private readonly IPartyListGenerator partyListGenerator;
+        private readonly uint closedPositionStatusCode = 1823;
+        private readonly uint dancePartnerStatusCode = 1824;
+        private List<BattleChara> dancers = [];
+        private List<BattleChara> dancePartners = [];
+
         public DancePartnerService(IActionExecutor actionExecutor, IPartyListGenerator partyListGenerator) 
         { 
             this.actionExecutor = actionExecutor;
             this.partyListGenerator = partyListGenerator;
+        }
+
+        private bool IsBattleCharaMainPlayer(BattleChara battleChara)
+        {
+            return battleChara.EntityId == PrepullPluginServices.ObjectTable.LocalPlayer?.EntityId;
         }
 
         private bool IsPlayerDancer(byte jobId)
@@ -30,12 +41,14 @@ namespace Prepull.Classes.Services
         {
             foreach (var partyMember in partyList)
             {
-                var jobId = partyMember.ClassJob;
-                if (IsPlayerDancer(jobId))
-                    return true;
+                var partyMemberJobId = partyMember.ClassJob;
+                if (IsPlayerDancer(partyMemberJobId))
+                {
+                    dancers.Add(partyMember);
+                }
             }
 
-            return false;
+            return dancers.Count > 0;
         }
 
         private int GetDancePartnerPriority(byte jobId)
@@ -59,17 +72,21 @@ namespace Prepull.Classes.Services
             };
         }
 
-        private unsafe void AssignDancePartner(ActionManager* am, List<BattleChara> partyList, string partnerName="")
+        private unsafe void AssignDancePartner(ActionManager* am, List<BattleChara> partyList, string designatedPartnerName="")
         {
-            ulong playerId = 0;
             var priority = int.MaxValue;
+            BattleChara? playerToAssign = null;
 
             foreach (var player in partyList)
             {
-                if (player.NameString.Equals(partnerName, StringComparison.OrdinalIgnoreCase))  // assign to designated partner if specified
+                if (player.HasStatus(dancePartnerStatusCode))
+                    continue;
+                if (IsBattleCharaMainPlayer(player))
+                    continue;
+                if (player.NameString.Equals(designatedPartnerName, StringComparison.OrdinalIgnoreCase))  // assign to designated partner if specified
                 {
-                    actionExecutor.ExecuteActionByJobId((byte)FfxivJob.Dancer, am, player.EntityId);
-                    return;
+                    playerToAssign = player;
+                    break;
                 }
 
                 var jobId = player.ClassJob;
@@ -77,65 +94,72 @@ namespace Prepull.Classes.Services
                 if (currentPriority < priority)
                 {
                     priority = currentPriority;
-                    playerId = player.EntityId;
+                    playerToAssign = player;
                 }
             }
 
-            if (playerId != 0)
+            if (playerToAssign != null)
             {
-                actionExecutor.ExecuteActionByJobId((byte)FfxivJob.Dancer, am, playerId);
+                actionExecutor.ExecuteActionByJobId((byte)FfxivJob.Dancer, am, playerToAssign.Value.EntityId);
+                _ = IsDancePartnerAssigned(partyList);
             }
         }
 
-        private bool TryIsDancePartnerAssigned(List<BattleChara> partyList, [NotNullWhen(true)] out BattleChara? partner)
+        private bool IsDancePartnerAssigned(List<BattleChara> partyList)
         {
+            dancePartners.Clear();
             foreach (var player in partyList)
             {
-                if (player.HasStatus(1822)) // dance partner status on other players
+                if (player.HasStatus(dancePartnerStatusCode)) // dance partner status on other players
                 {
-                    partner = player;
-                    return true;
+                    dancePartners.Add(player);
                 }
             }
-            partner = null;
-            return false;
+
+            return dancers.Count == dancePartners.Count;
         }
 
-        private unsafe void NormalContentDancePartnerCheck(byte jobId, ActionManager* am, ushort territoryId, List<BattleChara> partyList)
+        private unsafe void NormalContentDancePartnerCheck(byte mainPlayersJobId, ActionManager* am, ushort territoryId, List<BattleChara> partyList)
         {
-            if (TryIsDancePartnerAssigned(partyList, out _))
+            if (IsDancePartnerAssigned(partyList))
                 return;
 
-            if (IsPlayerDancer(jobId))
+            if (IsPlayerDancer(mainPlayersJobId))
             {
                 AssignDancePartner(am, partyList);
-                return;
             }
 
-            DisplayAndNotifyError(PrepullStrings.DancePartnerUnassigned);
+            if (dancers.Count != dancePartners.Count)
+            {
+                // Display error for dancers who have not given out dance partner
+                foreach (var player in dancers.Where(x => !x.HasStatus(closedPositionStatusCode))) 
+                { 
+                    DisplayAndNotifyError(string.Format(PrepullStrings.DancePartnerUnassigned, player.NameString));
+                }
+            }
         }
 
-        private unsafe void HighEndContentDancePartnerCheck(byte jobId, ActionManager* am, ushort territoryId, List<BattleChara> partyList)
+        private unsafe void HighEndContentDancePartnerCheck(byte mainPlayersJobId, ActionManager* am, ushort territoryId, List<BattleChara> partyList)
         {
             var territoryConfig = GetTerritoryConfig(territoryId);
             string targetPartner = territoryConfig.DesignatedDancePartner;
-            bool hasTargetConfig = !string.IsNullOrEmpty(targetPartner);
+            bool hasTargetPartnerConfig = !string.IsNullOrEmpty(targetPartner);
 
-            bool isPartnerAssigned = TryIsDancePartnerAssigned(partyList, out var currentPartner);
+            bool isPartnerAssigned = IsDancePartnerAssigned(partyList);
+            bool designatedPartnerNeedsAssignment = (hasTargetPartnerConfig && !dancePartners.Any(x => x.NameString == targetPartner));
 
-            bool needsPartnerAssignment = !isPartnerAssigned || 
-                (hasTargetConfig && currentPartner.Value.NameString != targetPartner);
+            bool needsPartnerAssignment = !isPartnerAssigned || designatedPartnerNeedsAssignment;
 
             if (!needsPartnerAssignment)
                 return;
 
-            if (IsPlayerDancer(jobId))
+            if (IsPlayerDancer(mainPlayersJobId))
             {
                 AssignDancePartner(am, partyList, targetPartner);
                 return;
             }
 
-            string errorMessage = hasTargetConfig ? string.Format(PrepullStrings.DesignatedDancePartnerUnassigned, targetPartner) : PrepullStrings.DancePartnerUnassigned;
+            string errorMessage = designatedPartnerNeedsAssignment ? string.Format(PrepullStrings.DesignatedDancePartnerUnassigned, targetPartner) : PrepullStrings.DancePartnerUnassigned;
 
             DisplayAndNotifyError(errorMessage);
         }
@@ -143,7 +167,7 @@ namespace Prepull.Classes.Services
         public unsafe void ExecuteDancePartnerCheck(byte jobId, ActionManager* am, ushort territoryId)
         {
             var partyList = partyListGenerator.GenerateBattleCharaList();
-            if (!IsPlayerDancer(jobId) && !IsDancerInParty(partyList))
+            if (!IsDancerInParty(partyList))
                 return;
 
             if (IsNormalContent(territoryId))
