@@ -28,12 +28,12 @@ namespace Prepull.Classes.Services
             };
         }
 
-        private unsafe void ActivateTankStance(byte jobId, ActionManager* am)
+        private void ActivateTankStance(byte jobId)
         {
-            actionExecutor.ExecuteActionByJobId(jobId, am);
+            actionExecutor.ExecuteActionByJobId(jobId);
         }
 
-        public unsafe void ExecuteTankCheck(byte jobId, ActionManager* am, ushort territoryId)
+        public void ExecuteTankCheck(byte jobId, ushort territoryId)
         {
             if (IsOtherNormalContent(territoryId)) return;
 
@@ -48,12 +48,12 @@ namespace Prepull.Classes.Services
 
             if (!IsNormalDungeon(territoryId) && (mainTankStanceIsOff || offTankStanceIsOn))
             {
-                ActivateTankStance(jobId, am);
+                ActivateTankStance(jobId);
                 return;
             }
             else if (IsNormalDungeon(territoryId) && !stanceActive)
             {
-                ActivateTankStance(jobId, am);
+                ActivateTankStance(jobId);
             }
         }
     }

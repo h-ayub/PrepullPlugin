@@ -43,9 +43,9 @@ namespace Prepull.Classes.Executors
             var jobId = playerStatePtr->CurrentClassJobId;
 
             gearAndFoodService.ExecuteGearAndFoodCheck(territoryId);
-            petService.ExecutePetCheck(jobId, am, territoryId);
-            tankService.ExecuteTankCheck(jobId, am, territoryId);
-            dancePartnerService.ExecuteDancePartnerCheck(jobId, am, territoryId);
+            petService.ExecutePetCheck(jobId, territoryId);
+            tankService.ExecuteTankCheck(jobId, territoryId);
+            dancePartnerService.ExecuteDancePartnerCheck(jobId, territoryId);
 
             return Task.CompletedTask;
         }

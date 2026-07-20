@@ -24,18 +24,18 @@ namespace Prepull.Classes.Services
                 _ => false,
             };
         }
-        public unsafe void ExecutePetCheck(byte jobId, ActionManager* am, ushort territoryId)
+        public void ExecutePetCheck(byte jobId, ushort territoryId)
         {
             var summonPet = PrepullPluginServices.BuddyList.PetBuddy == null && (IsNormalDungeon(territoryId) || IsSummonPet(jobId, territoryId));
 
             if (jobId == (byte)FfxivJob.Scholar && summonPet) // scholar
             {
-                actionExecutor.ExecuteActionByJobId(jobId, am); // Summon Eos
+                actionExecutor.ExecuteActionByJobId(jobId); // Summon Eos
             }
 
             if (jobId == (byte)FfxivJob.Summoner && summonPet) // summoner
             {
-                actionExecutor.ExecuteActionByJobId(jobId, am); // Summon Carbuncle
+                actionExecutor.ExecuteActionByJobId(jobId); // Summon Carbuncle
             }
         }
     }

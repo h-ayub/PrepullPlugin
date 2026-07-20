@@ -7,6 +7,6 @@ namespace Prepull.Classes.Interfaces
 {
     public interface IDancePartnerService
     {
-        public unsafe void ExecuteDancePartnerCheck(byte jobId, ActionManager* am, ushort territoryId);
+        public void ExecuteDancePartnerCheck(byte jobId, ushort territoryId);
     }
 }

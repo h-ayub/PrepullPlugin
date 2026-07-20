@@ -1,3 +1,4 @@
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.ClientState.Party;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
@@ -11,22 +12,32 @@ namespace Prepull.Classes.Helpers
     public class PartyListGenerator : IPartyListGenerator
     {
 
-        public List<BattleChara> GenerateBattleCharaList()
+        public List<IBattleChara> GenerateBattleCharaList()
         {
-            List<BattleChara> partyMembers = [];
+            List<IBattleChara> partyMembers = [];
 
             unsafe
             {
-                foreach (var characterEntry in CharacterManager.Instance()->BattleCharas)
+                var charaManager = CharacterManager.Instance();
+                if (charaManager == null) return partyMembers;
+
+                foreach (var characterEntry in charaManager->BattleCharas)
                 {
                     BattleChara* chara = characterEntry.Value;
                     if (chara == null) continue;
-                    if (chara->ObjectKind is not ObjectKind.Pc) continue;
-                    if (!chara->GetIsTargetable()) continue;
 
-                    var battleChara = *chara;
-                    if (battleChara.IsPartyMember || battleChara.EntityId == PrepullPluginServices.ObjectTable.LocalPlayer?.EntityId)
-                        partyMembers.Add(battleChara);
+                    // Un-comment filters as needed:
+                    //if (chara->Character.GameObject.ObjectKind is not ObjectKind.Pc) continue;
+                    if (!chara->GetIsTargetable()) continue;
+                    //if (!chara->IsPartyMember || chara->NameString != PrepullPluginServices.ObjectTable.LocalPlayer?.Name.TextValue) continue;
+
+                    // Convert the unmanaged pointer address into a Dalamud IBattleChara interface
+                    var managedChara = PrepullPluginServices.ObjectTable.CreateObjectReference((nint)chara) as IBattleChara;
+
+                    if (managedChara != null)
+                    {
+                        partyMembers.Add(managedChara);
+                    }
                 }
             }
 
