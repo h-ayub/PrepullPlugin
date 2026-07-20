@@ -39,6 +39,10 @@ public sealed class PrepullPlugin : IDalamudPlugin
         services.AddTransient<IPetService, PetService>();
         services.AddTransient<ITankService, TankService>();
         services.AddTransient<IEquipmentScanner, EquipmentScanner>();
+        services.AddTransient<IActionExecutor, ActionExecutor>();
+        services.AddTransient<IStatusListScanner, StatusListScanner>();
+        services.AddTransient<IDancePartnerService, DancePartnerService>();
+        services.AddTransient<IPartyListGenerator, PartyListGenerator>();
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(PrepullPlugin).Assembly));
         serviceProvider = services.BuildServiceProvider();
 
@@ -112,6 +116,6 @@ public sealed class PrepullPlugin : IDalamudPlugin
     private void ActivatePrepull(IDutyStateEventArgs args)
     {   
         var mediator = serviceProvider.GetRequiredService<IMediator>();
-        mediator.Send(new PrepullExecutor());
+        mediator.Send(new PrepullCommand());
     }
 }

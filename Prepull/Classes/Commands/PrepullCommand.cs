@@ -1,34 +1,41 @@
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.Interop;
 using MediatR;
 using Prepull.Classes.Interfaces;
 using Prepull.Classes.Services;
+using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Prepull.Classes.Executors
 {
-    public class PrepullExecutor : IRequest
+    public class PrepullCommand : IRequest
     {
     }
 
     [SupportedOSPlatform("windows")]
-    public class PrepullExecutorHandler : IRequestHandler<PrepullExecutor>
+    public class PrepullCommandHandler : IRequestHandler<PrepullCommand>
     {
         private readonly IGearAndFoodService gearAndFoodService;
         private readonly IPetService petService;
         private readonly ITankService tankService;
+        private readonly IDancePartnerService dancePartnerService;
 
-        public PrepullExecutorHandler(IGearAndFoodService gearAndFoodService, IPetService petService, ITankService tankService) 
+        public PrepullCommandHandler(IGearAndFoodService gearAndFoodService, IPetService petService, ITankService tankService, IDancePartnerService dancePartnerService) 
         {
             this.gearAndFoodService = gearAndFoodService;
             this.petService = petService;
             this.tankService = tankService;
+            this.dancePartnerService = dancePartnerService;
         }
 
 
-        public unsafe Task Handle(PrepullExecutor request, CancellationToken cancellationToken)
+        public unsafe Task Handle(PrepullCommand request, CancellationToken cancellationToken)
         {
             var am = ActionManager.Instance();
             var playerStatePtr = PlayerState.Instance();
@@ -36,8 +43,9 @@ namespace Prepull.Classes.Executors
             var jobId = playerStatePtr->CurrentClassJobId;
 
             gearAndFoodService.ExecuteGearAndFoodCheck(territoryId);
-            petService.ExecutePetCheck(jobId, am, territoryId);
-            tankService.ExecuteTankCheck(jobId, am, territoryId);
+            petService.ExecutePetCheck(jobId, territoryId);
+            tankService.ExecuteTankCheck(jobId, territoryId);
+            dancePartnerService.ExecuteDancePartnerCheck(jobId, territoryId);
 
             return Task.CompletedTask;
         }

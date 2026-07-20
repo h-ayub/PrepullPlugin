@@ -6,10 +6,21 @@ using System.Runtime.Versioning;
 namespace Prepull.Classes.Services
 {
     [SupportedOSPlatform("windows")]
-    public abstract class BaseService
+    public class BaseService
     {
-        protected BaseService() 
+        public BaseService() 
         { 
+        }
+
+        protected TerritoryConfig GetTerritoryConfig(ushort territoryId)
+        {
+            if (!PrepullSystem.Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
+            {
+                value = new TerritoryConfig(PrepullSystem.Configuration.DefaultMainTank, PrepullSystem.Configuration.FoodBuffRefreshTime);
+                PrepullSystem.Configuration.TerritoryConditions[territoryId] = value;
+            }
+
+            return value;
         }
 
         protected bool IsNormalDungeon(ushort territoryId)
@@ -18,10 +29,15 @@ namespace Prepull.Classes.Services
             return type == DutyType.Dungeon;
         }
 
-        protected bool IsNormalContent(ushort territoryId)
+        protected bool IsOtherNormalContent(ushort territoryId)
         {
             var type = PrepullSystem.TerritoryNames[territoryId].Item2;
             return type == DutyType.NormalRaid || type == DutyType.Alliance || type == DutyType.Trial || type == DutyType.Unknown;
+        }
+
+        public bool IsNormalContent(ushort territoryId)
+        {
+            return IsNormalDungeon(territoryId) || IsOtherNormalContent(territoryId);
         }
 
         protected void DisplayAndNotifyError(string message)
