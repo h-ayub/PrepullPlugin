@@ -6,6 +6,6 @@ namespace Prepull.Classes.Interfaces
 {
     public interface ITankService
     {
-        public unsafe void ExecuteTankCheck(byte jobId, FFXIVClientStructs.FFXIV.Client.Game.ActionManager* am, ushort territoryId);
+        public void ExecuteTankCheck(byte jobId, ushort territoryId);
     }
 }

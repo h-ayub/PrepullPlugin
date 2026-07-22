@@ -1,4 +1,5 @@
 using FFXIVClientStructs.FFXIV.Client.Game;
+using Prepull.Classes.Enums;
 using Prepull.Classes.Interfaces;
 using System.Runtime.Versioning;
 
@@ -7,36 +8,34 @@ namespace Prepull.Classes.Services
     [SupportedOSPlatform("windows")]
     public class PetService : BaseService, IPetService
     {
-        public PetService() : base() { }
+        private readonly IActionExecutor actionExecutor;
+        public PetService(IActionExecutor actionExecutor) : base() 
+        {
+            this.actionExecutor = actionExecutor;
+        }
 
         private bool IsSummonPet(byte jobId, ushort territoryId)
         {
-            if (!PrepullSystem.Configuration.TerritoryConditions.TryGetValue(territoryId, out var value))
+            var territoryConfig = GetTerritoryConfig(territoryId);
+            return (FfxivJob)jobId switch
             {
-                value = new TerritoryConfig(PrepullSystem.Configuration.DefaultMainTank, PrepullSystem.Configuration.FoodBuffRefreshTime);
-                PrepullSystem.Configuration.TerritoryConditions[territoryId] = value;
-            }
-            return jobId switch
-            {
-                27 => value.IsSchSummonPet,
-                28 => value.IsSmnSummonPet,
+                FfxivJob.Scholar => territoryConfig.IsSchSummonPet,
+                FfxivJob.Summoner => territoryConfig.IsSmnSummonPet,
                 _ => false,
             };
         }
-        public unsafe void ExecutePetCheck(byte jobId, ActionManager* am, ushort territoryId)
+        public void ExecutePetCheck(byte jobId, ushort territoryId)
         {
             var summonPet = PrepullPluginServices.BuddyList.PetBuddy == null && (IsNormalDungeon(territoryId) || IsSummonPet(jobId, territoryId));
 
-            if (jobId == 27 && summonPet) // scholar
+            if (jobId == (byte)FfxivJob.Scholar && summonPet) // scholar
             {
-                if (am->GetActionStatus(ActionType.Action, 25798) != 0) return;
-                am->UseAction(ActionType.Action, 25798);
+                actionExecutor.ExecuteActionByJobId(jobId); // Summon Eos
             }
 
-            if (jobId == 28 && summonPet) // summoner
+            if (jobId == (byte)FfxivJob.Summoner && summonPet) // summoner
             {
-                if (am->GetActionStatus(ActionType.Action, 17215) != 0) return;
-                am->UseAction(ActionType.Action, 17215);
+                actionExecutor.ExecuteActionByJobId(jobId); // Summon Carbuncle
             }
         }
     }

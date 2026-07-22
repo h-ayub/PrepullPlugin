@@ -8,22 +8,24 @@ namespace Prepull.Classes.Services
     [SupportedOSPlatform("windows")]
     public class GearAndFoodService : BaseService, IGearAndFoodService
     {
-        IEquipmentScanner equipmentScanner;
-        public GearAndFoodService(IEquipmentScanner equipmentScanner) : base() 
+        private readonly IEquipmentScanner equipmentScanner;
+        private readonly IStatusListScanner statusListScanner;
+        public GearAndFoodService(IEquipmentScanner equipmentScanner, IStatusListScanner statusListScanner) : base() 
         {
             this.equipmentScanner = equipmentScanner;
+            this.statusListScanner = statusListScanner;
         }
 
         private void CheckFoodForRefresh(ushort territoryId)
         {
             if (PrepullPluginServices.ObjectTable.LocalPlayer == null) return;
-            if (IsNormalContent(territoryId) || IsNormalDungeon(territoryId)) return;
+            if (IsNormalContent(territoryId)) return;
 
-            var hasFoodBuff = PrepullPluginServices.ObjectTable.LocalPlayer.StatusList.Any(x => x.StatusId == 48);
-            var timeRemaining = PrepullPluginServices.ObjectTable.LocalPlayer.StatusList.FirstOrDefault(x => x.StatusId == 48)?.RemainingTime;
+            var foodBuff = statusListScanner.GetPlayerStatusById(48); // well fed buff id
+            var timeRemaining = foodBuff?.RemainingTime;
             var refreshTime = PrepullSystem.Configuration.TerritoryConditions.TryGetValue(territoryId, out var value) ? value.FoodBuffRefreshTime : PrepullSystem.Configuration.FoodBuffRefreshTime;
 
-            if (!hasFoodBuff || timeRemaining < refreshTime)
+            if (foodBuff == null || timeRemaining < refreshTime)
             {
                 DisplayAndNotifyError(PrepullStrings.RefreshFood);
             }

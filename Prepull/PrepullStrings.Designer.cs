@@ -79,11 +79,38 @@ namespace Prepull {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dance partner.
+        /// </summary>
+        internal static string DancePartner {
+            get {
+                return ResourceManager.GetString("DancePartner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} has not given dance partner to anyone!.
+        /// </summary>
+        internal static string DancePartnerUnassigned {
+            get {
+                return ResourceManager.GetString("DancePartnerUnassigned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Default to main tank.
         /// </summary>
         internal static string DefaultMainTank {
             get {
                 return ResourceManager.GetString("DefaultMainTank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} does not have dance partner!.
+        /// </summary>
+        internal static string DesignatedDancePartnerUnassigned {
+            get {
+                return ResourceManager.GetString("DesignatedDancePartnerUnassigned", resourceCulture);
             }
         }
         

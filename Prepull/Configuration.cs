@@ -15,6 +15,7 @@ public class TerritoryConfig(bool defaultMainTank, int foodBuffRefreshTime)
     public bool IsSchSummonPet { get; set; } = true;
     public bool IsSmnSummonPet { get; set; } = true;
     public int FoodBuffRefreshTime { get; set; } = foodBuffRefreshTime;
+    public string DesignatedDancePartner { get; set; } = string.Empty;
 }
 
 [Serializable]
