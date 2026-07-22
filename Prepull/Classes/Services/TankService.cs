@@ -26,7 +26,13 @@ namespace Prepull.Classes.Services
             };
         }
 
-        private unsafe void ActivateTankStance(byte jobId, ActionManager* am)
+        private bool IsTank(byte jobId)
+        {
+            var job = (FfxivJob)jobId;
+            return job == FfxivJob.Paladin || job == FfxivJob.Warrior || job == FfxivJob.DarkKnight || job == FfxivJob.Gunbreaker;
+        }
+
+        private bool IsMainTank(byte jobId, ushort territoryId)
         {
             uint actionId = jobId switch
             {
@@ -45,7 +51,9 @@ namespace Prepull.Classes.Services
 
         public unsafe void ExecuteTankCheck(byte jobId, ActionManager* am, ushort territoryId)
         {
-            if (IsNormalContent(territoryId)) return;
+            if (!IsTank(jobId)) return;
+
+            if (IsOtherNormalContent(territoryId)) return;
 
             ushort stanceId = jobId switch
             {
