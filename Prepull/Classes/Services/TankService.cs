@@ -15,6 +15,12 @@ namespace Prepull.Classes.Services
             this.actionExecutor = actionExecutor;
         }
 
+        private bool IsTank(byte jobId)
+        {
+            var job = (FfxivJob)jobId;
+            return job == FfxivJob.Paladin || job == FfxivJob.Warrior || job == FfxivJob.DarkKnight || job == FfxivJob.Gunbreaker;
+        }
+
         private bool IsMainTank(byte jobId, ushort territoryId)
         {
             var territoryConfig = GetTerritoryConfig(territoryId);
@@ -28,13 +34,7 @@ namespace Prepull.Classes.Services
             };
         }
 
-        private bool IsTank(byte jobId)
-        {
-            var job = (FfxivJob)jobId;
-            return job == FfxivJob.Paladin || job == FfxivJob.Warrior || job == FfxivJob.DarkKnight || job == FfxivJob.Gunbreaker;
-        }
-
-        private bool IsMainTank(byte jobId, ushort territoryId)
+        private void ActivateTankStance(byte jobId)
         {
             actionExecutor.ExecuteActionByJobId(jobId);
         }
