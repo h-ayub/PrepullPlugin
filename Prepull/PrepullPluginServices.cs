@@ -19,4 +19,5 @@ internal class PrepullPluginServices
     [PluginService] public static IPlayerState PlayerState { get; set; }
     [PluginService] public static IObjectTable ObjectTable { get; set; }
     [PluginService] public static IPartyList PartyList { get; set; }
+    [PluginService] public static IPluginLog PluginLog { get; set; }
 }

@@ -161,9 +161,17 @@ namespace Prepull.Classes.Services
                 return;
             }
 
-            string errorMessage = designatedPartnerNeedsAssignment ? string.Format(PrepullStrings.DesignatedDancePartnerUnassigned, targetPartner) : PrepullStrings.DancePartnerUnassigned;
+            if (designatedPartnerNeedsAssignment)
+                DisplayAndNotifyError(string.Format(PrepullStrings.DesignatedDancePartnerUnassigned, targetPartner));
 
-            DisplayAndNotifyError(errorMessage);
+            if (dancers.Count != dancePartners.Count)
+            {
+                // Display error for dancers 
+                foreach (var player in dancers.Where(x => !x.HasStatus(closedPositionStatusCode)))
+                {
+                    DisplayAndNotifyError(string.Format(PrepullStrings.DancePartnerUnassigned, player.Name.TextValue));
+                }
+            }
         }
 
         public void ExecuteDancePartnerCheck(byte jobId, ushort territoryId)
