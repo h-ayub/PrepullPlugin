@@ -1,7 +1,9 @@
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.ClientState.Party;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using Prepull.Classes.Enums;
 using Prepull.Classes.Interfaces;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
@@ -29,7 +31,10 @@ namespace Prepull.Classes.Helpers
                     // Un-comment filters as needed:
                     if (chara->Character.GameObject.ObjectKind is not ObjectKind.Pc) continue;
                     if (!chara->GetIsTargetable()) continue;
-                    if (!chara->IsPartyMember || chara->NameString != PrepullPluginServices.ObjectTable.LocalPlayer?.Name.TextValue) continue;
+                    PrepullPluginServices.PluginLog.Information(chara->NameString);
+                    PrepullPluginServices.PluginLog.Information(chara->IsPartyMember.ToString());
+                    if (!chara->IsPartyMember && chara->NameString != PrepullPluginServices.ObjectTable.LocalPlayer?.Name.TextValue) continue;
+                    PrepullPluginServices.PluginLog.Information(chara->NameString);
 
                     // Convert the unmanaged pointer address into a Dalamud IBattleChara interface
                     var managedChara = PrepullPluginServices.ObjectTable.CreateObjectReference((nint)chara) as IBattleChara;
