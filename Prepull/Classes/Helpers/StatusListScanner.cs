@@ -1,3 +1,4 @@
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.ClientState.Party;
 using Dalamud.Game.ClientState.Statuses;
 using Prepull.Classes.Interfaces;
@@ -25,9 +26,9 @@ namespace Prepull.Classes.Helpers
             return null;
         }
 
-        public IStatus? GetPartyMemberStatusById(uint statusId, IPartyMember partyMember)
+        public IStatus? GetPartyMemberStatusById(uint statusId, IBattleChara partyMember)
         {
-            return GetStatusById(statusId, partyMember.Statuses);
+            return GetStatusById(statusId, partyMember.StatusList);
         }
 
         public IStatus? GetPlayerStatusById(uint statusId)
@@ -38,6 +39,16 @@ namespace Prepull.Classes.Helpers
             }
 
             return GetStatusById(statusId, PrepullPluginServices.ObjectTable.LocalPlayer.StatusList);
+        }
+
+        public bool PartyMemberHasStatus(uint statusId, IBattleChara partyMember)
+        {
+            return GetPartyMemberStatusById(statusId, partyMember) != null;
+        }
+
+        public bool PlayerHasStatus(uint statusId)
+        {
+            return GetPlayerStatusById(statusId) != null;
         }
     }
 }

@@ -21,6 +21,7 @@ namespace Prepull.Classes.Helpers
                 FfxivJob.Dancer => 16006,   // Dance Partner
                 FfxivJob.Scholar => 25798,  // Summon Eos
                 FfxivJob.Summoner => 17215, // Summon carbuncle
+                FfxivJob.Sage => 24285,     // Kardia
                 _ => throw new System.NotImplementedException(),
             };
         }

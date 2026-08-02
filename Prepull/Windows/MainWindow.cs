@@ -8,6 +8,7 @@ using Dalamud.Bindings.ImGui;
 using System.Runtime.Versioning;
 using Prepull.Classes.Enums;
 using Prepull.Classes.Services;
+using Prepull.Classes.Interfaces;
 
 namespace Prepull.Windows;
 
@@ -17,8 +18,9 @@ public class MainWindow : Window, IDisposable
     private readonly PrepullPlugin Plugin;
     private readonly unsafe PlayerState* PlayerStatePtr = PlayerState.Instance();
     private readonly BaseService baseService = new BaseService();
+    private readonly ICheckJob checkJob;
 
-    public MainWindow(PrepullPlugin plugin)
+    public MainWindow(PrepullPlugin plugin, ICheckJob checkJob)
         : base(PrepullStrings.MainWindowTitle, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         SizeConstraints = new WindowSizeConstraints
@@ -28,6 +30,7 @@ public class MainWindow : Window, IDisposable
         };
 
         Plugin = plugin;
+        this.checkJob = checkJob;
     }
 
     public void Dispose() { }
@@ -46,27 +49,33 @@ public class MainWindow : Window, IDisposable
         // who cares if this is normal content...
         if (baseService.IsNormalContent(territoryId))
             return;
-        
+
         if (!PrepullSystem.Configuration.TerritoryConditions.ContainsKey(territoryId)) // check if we do not have data on this territory
         {
             PrepullSystem.Configuration.TerritoryConditions[territoryId] = new TerritoryConfig(PrepullSystem.Configuration.DefaultMainTank, PrepullSystem.Configuration.FoodBuffRefreshTime);
         }
 
-        var jobId = (FfxivJob)PlayerStatePtr->CurrentClassJobId;
+        var jobId = PlayerStatePtr->CurrentClassJobId;
         ImGui.Text(ReturnTerritoryName(territoryId));
         ImGui.Spacing();
 
-        if (jobId == FfxivJob.Paladin || jobId == FfxivJob.Warrior || jobId == FfxivJob.DarkKnight || jobId == FfxivJob.Gunbreaker)   // tanks: warrior, paladin, dark knight, gunbreaker
+        if (checkJob.IsTank(jobId))   // tanks: warrior, paladin, dark knight, gunbreaker
         {
-            DrawTankUi(jobId, territoryId);
-        } else if (jobId == FfxivJob.Scholar || jobId == FfxivJob.Summoner)  // scholar, summoner
+            DrawTankUi((FfxivJob)jobId, territoryId);
+        } else if (checkJob.HasSummonablePet(jobId))  // scholar, summoner
         {
-            DrawPetSummonUi(jobId, territoryId);
+            DrawPetSummonUi((FfxivJob)jobId, territoryId);
         }
 
         DrawFoodBuffRefreshTimeUi(territoryId);
         DrawDesignatedDancePartnerUi(territoryId);
+        if (checkJob.IsExpectedJob(jobId, FfxivJob.Sage))
+        {
+            DrawSageKardiaUi((FfxivJob)jobId, territoryId);
+        }
     }
+
+    
 
     private void DrawTankUi(FfxivJob jobId, ushort territoryId)
     {
@@ -144,6 +153,17 @@ public class MainWindow : Window, IDisposable
         if (ImGui.InputText(PrepullStrings.DancePartner, ref designatedDancePartner, 50))
         {
             PrepullSystem.Configuration.TerritoryConditions[territoryId].DesignatedDancePartner = designatedDancePartner;
+            PrepullSystem.Configuration.Save();
+        }
+    }
+
+    private void DrawSageKardiaUi(FfxivJob jobId, ushort territoryId)
+    {
+        var designatedKardiaPartner = PrepullSystem.Configuration.TerritoryConditions[territoryId].DesignatedKardiaPartner;
+        ImGui.SetNextItemWidth(200f * ImGuiHelpers.GlobalScale);
+        if (ImGui.InputText(PrepullStrings.KardiaPartner, ref designatedKardiaPartner, 50))
+        {
+            PrepullSystem.Configuration.TerritoryConditions[territoryId].DesignatedKardiaPartner = designatedKardiaPartner;
             PrepullSystem.Configuration.Save();
         }
     }

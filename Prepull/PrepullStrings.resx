@@ -174,4 +174,10 @@
   <data name="DancePartner" xml:space="preserve">
     <value>Dance partner</value>
   </data>
+  <data name="KardiaNotActive" xml:space="preserve">
+    <value>Kardia is not applied on anyone!</value>
+  </data>
+  <data name="KardiaPartner" xml:space="preserve">
+    <value>Kardia partner</value>
+  </data>
 </root>
