@@ -19,6 +19,7 @@ namespace Prepull.Classes.Enums
         Gunbreaker = 37,
         Dancer = 38,
         Reaper = 39,
+        Sage = 40,
         Viper = 41,
         Pictomancer = 42,
     }

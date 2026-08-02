@@ -160,6 +160,24 @@ namespace Prepull {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Kardia is not applied on anyone!.
+        /// </summary>
+        internal static string KardiaNotActive {
+            get {
+                return ResourceManager.GetString("KardiaNotActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kardia partner.
+        /// </summary>
+        internal static string KardiaPartner {
+            get {
+                return ResourceManager.GetString("KardiaPartner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Prepull##With a hidden ID.
         /// </summary>
         internal static string MainWindowTitle {

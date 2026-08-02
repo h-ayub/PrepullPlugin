@@ -18,15 +18,17 @@ namespace Prepull.Classes.Services
     {
         private readonly IActionExecutor actionExecutor;
         private readonly IPartyListGenerator partyListGenerator;
+        private readonly ICheckJob checkJob;
         private readonly uint closedPositionStatusCode = 1823;
         private readonly uint dancePartnerStatusCode = 1824;
         private List<IBattleChara> dancers = [];
         private List<IBattleChara> dancePartners = [];
 
-        public DancePartnerService(IActionExecutor actionExecutor, IPartyListGenerator partyListGenerator) 
+        public DancePartnerService(IActionExecutor actionExecutor, IPartyListGenerator partyListGenerator, ICheckJob checkJob) 
         { 
             this.actionExecutor = actionExecutor;
             this.partyListGenerator = partyListGenerator;
+            this.checkJob = checkJob;
         }
 
         private bool IsBattleCharaMainPlayer(IBattleChara battleChara)
@@ -34,17 +36,12 @@ namespace Prepull.Classes.Services
             return battleChara.EntityId == PrepullPluginServices.ObjectTable.LocalPlayer?.EntityId;
         }
 
-        private bool IsPlayerDancer(byte jobId)
-        {
-            return (FfxivJob)jobId == FfxivJob.Dancer;
-        }
-
         private bool IsDancerInParty(List<IBattleChara> partyList)
         {
             foreach (var partyMember in partyList)
             {
                 var partyMemberJobId = (byte)partyMember.ClassJob.RowId;
-                if (IsPlayerDancer(partyMemberJobId) && partyMember.Level >= 60)
+                if (checkJob.IsExpectedJob(partyMemberJobId, FfxivJob.Dancer) && partyMember.Level >= 60)
                 {
                     dancers.Add(partyMember);
                 }
@@ -126,7 +123,7 @@ namespace Prepull.Classes.Services
             if (IsDancePartnerAssigned(partyList))
                 return;
 
-            if (IsPlayerDancer(mainPlayersJobId))
+            if (checkJob.IsExpectedJob(mainPlayersJobId, FfxivJob.Dancer))
             {
                 AssignDancePartner(partyList);
             }
@@ -155,7 +152,7 @@ namespace Prepull.Classes.Services
             if (!needsPartnerAssignment)
                 return;
 
-            if (IsPlayerDancer(mainPlayersJobId))
+            if (checkJob.IsExpectedJob(mainPlayersJobId, FfxivJob.Dancer))
             {
                 AssignDancePartner(partyList, targetPartner);
                 return;

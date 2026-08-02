@@ -25,13 +25,15 @@ namespace Prepull.Classes.Executors
         private readonly IPetService petService;
         private readonly ITankService tankService;
         private readonly IDancePartnerService dancePartnerService;
+        private readonly IKardiaService kardiaService;
 
-        public PrepullCommandHandler(IGearAndFoodService gearAndFoodService, IPetService petService, ITankService tankService, IDancePartnerService dancePartnerService) 
+        public PrepullCommandHandler(IGearAndFoodService gearAndFoodService, IPetService petService, ITankService tankService, IDancePartnerService dancePartnerService, IKardiaService kardiaService) 
         {
             this.gearAndFoodService = gearAndFoodService;
             this.petService = petService;
             this.tankService = tankService;
             this.dancePartnerService = dancePartnerService;
+            this.kardiaService = kardiaService;
         }
 
 
@@ -46,6 +48,7 @@ namespace Prepull.Classes.Executors
             petService.ExecutePetCheck(jobId, territoryId);
             tankService.ExecuteTankCheck(jobId, territoryId);
             dancePartnerService.ExecuteDancePartnerCheck(jobId, territoryId);
+            kardiaService.ExecuteKardiaCheck(jobId, territoryId);
 
             return Task.CompletedTask;
         }

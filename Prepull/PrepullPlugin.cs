@@ -38,18 +38,20 @@ public sealed class PrepullPlugin : IDalamudPlugin
         services.AddTransient<IGearAndFoodService, GearAndFoodService>();
         services.AddTransient<IPetService, PetService>();
         services.AddTransient<ITankService, TankService>();
+        services.AddTransient<IDancePartnerService, DancePartnerService>();
+        services.AddTransient<IKardiaService, KardiaService>();
         services.AddTransient<IEquipmentScanner, EquipmentScanner>();
         services.AddTransient<IActionExecutor, ActionExecutor>();
         services.AddTransient<IStatusListScanner, StatusListScanner>();
-        services.AddTransient<IDancePartnerService, DancePartnerService>();
         services.AddTransient<IPartyListGenerator, PartyListGenerator>();
+        services.AddTransient<ICheckJob, CheckJob>();
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(PrepullPlugin).Assembly));
         serviceProvider = services.BuildServiceProvider();
 
         PrepullSystem.Configuration = PrepullPluginServices.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
         ConfigWindow = new ConfigWindow(this);
-        MainWindow = new MainWindow(this);
+        MainWindow = new MainWindow(this, new CheckJob());
 
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);

@@ -10,15 +10,11 @@ namespace Prepull.Classes.Services
     public class TankService : BaseService, ITankService
     {
         private readonly IActionExecutor actionExecutor;
-        public TankService(IActionExecutor actionExecutor) : base() 
+        private readonly ICheckJob checkJob;
+        public TankService(IActionExecutor actionExecutor, ICheckJob checkJob) : base() 
         {
             this.actionExecutor = actionExecutor;
-        }
-
-        private bool IsTank(byte jobId)
-        {
-            var job = (FfxivJob)jobId;
-            return job == FfxivJob.Paladin || job == FfxivJob.Warrior || job == FfxivJob.DarkKnight || job == FfxivJob.Gunbreaker;
+            this.checkJob = checkJob;
         }
 
         private bool IsMainTank(byte jobId, ushort territoryId)
@@ -41,7 +37,7 @@ namespace Prepull.Classes.Services
 
         public void ExecuteTankCheck(byte jobId, ushort territoryId)
         {
-            if (!IsTank(jobId)) return;
+            if (!checkJob.IsTank(jobId)) return;
 
             if (IsOtherNormalContent(territoryId)) return;
 
