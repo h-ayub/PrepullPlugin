@@ -1,6 +1,6 @@
 # PrepullPlugin
 
-Prepull, a plugin to automate various prepull things in raid like tank stance, fairy, food buff refresh reminder, and repair reminder
+Prepull, a plugin to automate various prepull things in raid like tank stance, fairy, dance partner, kardia, food buff refresh reminder, and repair reminder
 
 # Installation
 
